@@ -27,6 +27,10 @@
     "typescript": "^5.7.2"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "npx ts-node --project tsconfig.prisma.json prisma/seed.ts"
+  },
+  "engines": {
+    "node": "22.x",
+    "npm": "10.x"
   }
 }

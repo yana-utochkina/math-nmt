@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -38,7 +38,7 @@ model Topic {
 
 model Task {
   id            String          @id @default(uuid()) @db.Uuid
-  topicID       String
+  topicID       String          @db.Uuid
   topic         Topic           @relation(fields: [topicID], references: [id])
   name          String
   task_img      String
@@ -48,9 +48,9 @@ model Task {
 }
 
 model UserTask {
-  userID   String
+  userID   String   @db.Uuid
   user     User     @relation(fields: [userID], references: [id])
-  taskID   String
+  taskID   String   @db.Uuid
   task     Task     @relation(fields: [taskID], references: [id])
   progress Boolean?
 
@@ -58,9 +58,9 @@ model UserTask {
 }
 
 model UserTopic {
-  userID   String
+  userID   String @db.Uuid
   user     User   @relation(fields: [userID], references: [id])
-  topicID  String
+  topicID  String @db.Uuid
   topic    Topic  @relation(fields: [topicID], references: [id])
   progress Float?
 
@@ -78,11 +78,11 @@ model Plan {
 }
 
 model PlanTopicTask {
-  planID  String
+  planID  String  @db.Uuid
   plan    Plan    @relation(fields: [planID], references: [id])
-  topicID String
+  topicID String  @db.Uuid
   topic   Topic   @relation(fields: [topicID], references: [id])
-  taskID  String
+  taskID  String  @db.Uuid
   task    Task    @relation(fields: [taskID], references: [id])
   User    User?   @relation(fields: [userId], references: [id])
   userId  String? @db.Uuid

@@ -3,7 +3,7 @@
 ### 1. Клонуйте репозиторій
 
 ``` bash
-git clone [https://github.com/yana-utochkina/math-nmt/tree/main](https://github.com/yana-utochkina/math-nmt.git)
+git clone https://github.com/yana-utochkina/math-nmt.git
 ```
 
 ### 2. Перевірте чи знаходитесь в master гілці, а в разі чого перейдіть в неї

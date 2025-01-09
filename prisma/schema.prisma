@@ -8,42 +8,47 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid()) @db.Uuid
+  id        String @id @default(uuid()) @db.Uuid
   firstName String
   nickname  String
-  email     String  @unique
+  email     String @unique
   password  String
-  avatarID  String? @db.Uuid
 
-  avatar Image? @relation(fields: [avatarID], references: [id])
-
-  UserTask      UserTask[]
-  Plan          Plan[]
-  PlanTopicTask PlanTopicTask[]
+  UserTask UserTask[]
+  Plan     Plan[]
+  PlanTask PlanTask[]
 }
 
 model Topic {
-  id    String @id @default(uuid()) @db.Uuid
-  title String
+  id       String @id @default(uuid()) @db.Uuid
+  parentID Int
+  title    String
 
-  Task          Task[]
-  Plan          Plan[]
-  PlanTopicTask PlanTopicTask[]
+  Task   Task[]
+  Plan   Plan[]
+  Theory Theory[]
+}
+
+model Theory {
+  topicID String @db.Uuid
+  content String @db.Text
+
+  topic Topic @relation(fields: [topicID], references: [id])
+
+  @@id([topicID])
 }
 
 model Task {
   id          String @id @default(uuid()) @db.Uuid
   topicID     String @db.Uuid
   description String
-  problemID   String @db.Uuid
-  solutionID  String @db.Uuid
+  problem     String
+  solution    String
 
-  topic    Topic @relation(fields: [topicID], references: [id])
-  problem  Image @relation("ProblemImage", fields: [problemID], references: [id])
-  solution Image @relation("SolutionImage", fields: [solutionID], references: [id])
+  topic Topic @relation(fields: [topicID], references: [id])
 
-  UserTask      UserTask[]      @relation(fields: [], references: [])
-  PlanTopicTask PlanTopicTask[]
+  UserTask UserTask[] @relation(fields: [], references: [])
+  PlanTask PlanTask[]
 }
 
 model UserTask {
@@ -58,36 +63,27 @@ model UserTask {
 }
 
 model Plan {
-  id     String @id @default(uuid()) @db.Uuid
-  userID String @db.Uuid
+  id        String    @id @default(uuid()) @db.Uuid
+  userID    String    @db.Uuid
+  hours     Int?
+  startDate DateTime  @default(now())
+  endDate   DateTime?
 
   User User @relation(fields: [userID], references: [id])
 
-  PlanTopicTask PlanTopicTask[]
-  Topic         Topic?          @relation(fields: [topicId], references: [id])
-  topicId       String?         @db.Uuid
+  Topic    Topic?     @relation(fields: [topicId], references: [id])
+  topicId  String?    @db.Uuid
+  PlanTask PlanTask[]
 }
 
-model PlanTopicTask {
-  planID  String @db.Uuid
-  topicID String @db.Uuid
-  taskID  String @db.Uuid
+model PlanTask {
+  planID String @db.Uuid
+  taskID String @db.Uuid
 
   plan   Plan    @relation(fields: [planID], references: [id])
-  topic  Topic   @relation(fields: [topicID], references: [id])
   task   Task    @relation(fields: [taskID], references: [id])
   User   User?   @relation(fields: [userId], references: [id])
   userId String? @db.Uuid
 
-  @@id([planID, topicID, taskID])
-}
-
-model Image {
-  id String @id @default(uuid()) @db.Uuid
-
-  data Bytes
-
-  ProblemTask  Task[] @relation("ProblemImage")
-  SolutionTask Task[] @relation("SolutionImage")
-  User         User[]
+  @@id([planID, taskID])
 }

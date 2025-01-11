@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,78 +8,82 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid()) @db.Uuid
-  name     String
-  email    String @unique
-  password String
+  id        String @id @default(uuid()) @db.Uuid
+  firstName String
+  nickname  String
+  email     String @unique
+  password  String
 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  UserTask      UserTask[]
-  UserTopic     UserTopic[]
-  Plan          Plan[]
-  PlanTopicTask PlanTopicTask[]
+  UserTask UserTask[]
+  Plan     Plan[]
+  PlanTask PlanTask[]
 }
 
 model Topic {
-  id            String          @id @default(uuid()) @db.Uuid
-  name          String
-  Task          Task[]
-  UserTopic     UserTopic[]
-  Plan          Plan[]
-  PlanTopicTask PlanTopicTask[]
+  id       String @id @default(uuid()) @db.Uuid
+  parentID Int
+  title    String
+
+  Task   Task[]
+  Plan   Plan[]
+  Theory Theory[]
+}
+
+model Theory {
+  topicID String @db.Uuid
+  content String @db.Text
+
+  topic Topic @relation(fields: [topicID], references: [id])
+
+  @@id([topicID])
 }
 
 model Task {
-  id            String          @id @default(uuid()) @db.Uuid
-  topicID       String          @db.Uuid
-  topic         Topic           @relation(fields: [topicID], references: [id])
-  name          String
-  task_img      String
-  solution_img  String?
-  UserTask      UserTask[]      @relation(fields: [], references: [])
-  PlanTopicTask PlanTopicTask[]
+  id          String @id @default(uuid()) @db.Uuid
+  topicID     String @db.Uuid
+  description String
+  problem     String
+  solution    String
+
+  topic Topic @relation(fields: [topicID], references: [id])
+
+  UserTask UserTask[] @relation(fields: [], references: [])
+  PlanTask PlanTask[]
 }
 
 model UserTask {
-  userID   String   @db.Uuid
-  user     User     @relation(fields: [userID], references: [id])
-  taskID   String   @db.Uuid
-  task     Task     @relation(fields: [taskID], references: [id])
-  progress Boolean?
+  userID    String    @db.Uuid
+  taskID    String    @db.Uuid
+  passed_on DateTime?
+
+  user User @relation(fields: [userID], references: [id])
+  task Task @relation(fields: [taskID], references: [id])
 
   @@id([userID, taskID])
 }
 
-model UserTopic {
-  userID   String @db.Uuid
-  user     User   @relation(fields: [userID], references: [id])
-  topicID  String @db.Uuid
-  topic    Topic  @relation(fields: [topicID], references: [id])
-  progress Float?
-
-  @@id([userID, topicID])
-}
-
 model Plan {
-  id String @id @default(uuid()) @db.Uuid
+  id        String    @id @default(uuid()) @db.Uuid
+  userID    String    @db.Uuid
+  hours     Int?
+  startDate DateTime  @default(now())
+  endDate   DateTime?
 
-  User          User?           @relation(fields: [userId], references: [id])
-  userId        String?         @db.Uuid
-  Topic         Topic?          @relation(fields: [topicId], references: [id])
-  topicId       String?         @db.Uuid
-  PlanTopicTask PlanTopicTask[]
+  User User @relation(fields: [userID], references: [id])
+
+  Topic    Topic?     @relation(fields: [topicId], references: [id])
+  topicId  String?    @db.Uuid
+  PlanTask PlanTask[]
 }
 
-model PlanTopicTask {
-  planID  String  @db.Uuid
-  plan    Plan    @relation(fields: [planID], references: [id])
-  topicID String  @db.Uuid
-  topic   Topic   @relation(fields: [topicID], references: [id])
-  taskID  String  @db.Uuid
-  task    Task    @relation(fields: [taskID], references: [id])
-  User    User?   @relation(fields: [userId], references: [id])
-  userId  String? @db.Uuid
+model PlanTask {
+  planID String @db.Uuid
+  taskID String @db.Uuid
 
-  @@id([planID, topicID, taskID])
+  plan   Plan    @relation(fields: [planID], references: [id])
+  task   Task    @relation(fields: [taskID], references: [id])
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String? @db.Uuid
+
+  @@id([planID, taskID])
 }

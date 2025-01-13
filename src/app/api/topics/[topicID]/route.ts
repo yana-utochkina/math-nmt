@@ -46,11 +46,24 @@ export async function PUT(request: Request, context: any) {
 
         return NextResponse.json(updatedTopic, { status: 200 })
     }
-    catch (error) {
+    catch {
         return new NextResponse(`Wrong topic updating params`, { status: 501 }); // знайти код
     }
 }
 
-export async function DELETE() {
-    return new NextResponse(`Not implemented error`, { status: 501 });
+export async function DELETE(request: Request, context: any) {
+    try {
+        const { params } = context;
+
+        const deletedTopic = await prisma.topic.delete({
+            where: {
+                id: params.topicID,
+            },
+        });
+
+        return NextResponse.json(deletedTopic, { status: 200 });
+    }
+    catch (error) {
+        return new NextResponse(`Topic ID error: ${error.message}`, { status: 404 });
+    }
 }

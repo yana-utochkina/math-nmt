@@ -20,3 +20,28 @@ export async function GET(request: Request, context: any) {
     }
 }
 
+
+export async function POST(request: Request) {
+    try{
+        const body = await request.json();
+
+        const {topicID, description, problem, solution, type, answer} = body;
+
+
+        const newTask = await prisma.task.create({
+            data: {
+                topicID: topicID,
+                description: description,
+                problem: problem,
+                solution: solution,
+                type: type,
+                answer: answer,
+            }
+        })
+
+        return NextResponse.json(newTask, { status: 201 });
+    }
+    catch (error) {
+        return NextResponse.json(`Wrong task parameters: ${error.message}`, { status: 400 });
+    }
+}

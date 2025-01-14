@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     }
 }
 
-export async function PUT() {
+export async function PATCH() {
     return new NextResponse(`Not implemented error`, { status: 501 });
 }
 

@@ -1,68 +1,55 @@
 // Create-запит на створення плану (в параметрах hours : int, endDate : DateType????)
-
-import { NextResponse } from "next/server";
+"use server";
+import { Plan } from "@prisma/client";
 import { prisma } from "../../../lib/db";
+import { NextResponse } from "next/server"
 
-export async function post(request: Request) {
+// export const GET = async () => {
+//     try {
+//         const plans = await prisma.plan.findMany();
+//         return new NextResponse(JSON.stringify(plans), { status: 200 });
+//     }
+//     catch (error: any) {
+//         return new NextResponse("Error in users" + error.message, { status: 500 });
+//     }
+// };
+
+export const GET = async () => {
     try {
-        const { hours, endDate } = await request.json();
 
-        if (typeof hours !== 'number' || !(endDate instanceof Date)) {
-            return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
-        }
-
-        const newPlan = await prisma.plan.create({
-            data: {
-                hours: "",
-                endDate: "",
-            },
-        });
-
-        return NextResponse.json(newPlan, { status: 201 });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to create plan' }, { status: 500 });
+        const plans = await prisma.plan.findMany();
+        return NextResponse.json(plans, { status: 200 });
     }
+    catch (error: any) {
+        return NextResponse.json({ error: `Prisma error: ${error.message}` }, { status: 503 });
+    }
+};
+
+
+export const POST = async (request: Request) => {
+    try {
+        const { userID, hours, endDate } = await request.json();
+        const newPlan: Plan = {} as Plan;
+        if (!userID) {
+            return NextResponse.json({ error: `Plans error: required user ID and none is provided` }, { status: 503 });
+        }
+        newPlan.userID = userID;
+        if (hours) newPlan.hours = hours;
+        if (endDate) newPlan.endDate = endDate;
+
+
+        const plan = await prisma.plan.create({ data: newPlan });
+        return NextResponse.json(plan, { status: 200 });
+    }
+    catch (error: any) {
+        return NextResponse.json({ error: `Prisma error: ${error.message}` }, { status: 503 });
+    }
+};
+
+export const PATCH = async (request: Request) => {
+    return new NextResponse(`Not implemented error`, { status: 501 });
 }
 
-
-
-//GPT
-// export async function POST(req) {
-//   try {
-//     // Parse request body
-//     const body = await req.json();
-//     const { hours, endDate } = body;
-
-// Validate input
-//     if (!hours || typeof hours !== "number" || hours <= 0) {
-//       return NextResponse.json(
-//         { error: "Invalid or missing 'hours' parameter" },
-//         { status: 400 }
-//       );
-//     }
-
-//     if (!endDate || isNaN(Date.parse(endDate))) {
-//       return NextResponse.json(
-//         { error: "Invalid or missing 'endDate' parameter" },
-//         { status: 400 }
-//       );
-//     }
-
-// Create a new plan
-//     const newPlan = await prisma.plan.create({
-//       data: {
-//         hours,
-//         endDate: new Date(endDate), // Ensure endDate is a valid Date object
-//       },
-//     });
-
-// Return the created plan
-//     return NextResponse.json(newPlan, { status: 201 });
-//   } catch (error) {
-//     console.error("Error creating plan:", error);
-//     return NextResponse.json(
-//       { error: "An error occurred while creating the plan" },
-//       { status: 500 }
-//     );
-//   }
-// }
+export const DELETE = async (request: Request) => {
+    return new NextResponse(`Not implemented error`, { status: 501 });
+}

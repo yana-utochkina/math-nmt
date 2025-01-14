@@ -10,8 +10,6 @@ export async function get(req) {
     },
     select: {
       title: true,
-      theory: true,
-      progress: true,
     },
   });
 

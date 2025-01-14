@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid()) @db.Uuid
+  id        String @id @default(uuid()) @db.Uuid
   firstName String?
   nickname  String
   email     String  @unique
@@ -20,9 +20,9 @@ model User {
 }
 
 model Topic {
-  id       String  @id @default(uuid()) @db.Uuid
-  parentID Int
-  title    String?
+  id       String @id @default(uuid()) @db.Uuid
+  parentID String @default("96a2384c-2c11-45b6-af7d-ca04cdffea84") @db.Uuid
+  title    String
 
   Task   Task[]
   Plan   Plan[]
@@ -39,17 +39,24 @@ model Theory {
 }
 
 model Task {
-  id          String  @id @default(uuid()) @db.Uuid
-  topicID     String? @db.Uuid
+  id          String     @id @default(uuid()) @db.Uuid
+  topicID     String     @db.Uuid
   description String
   problem     String
   solution    String
-  progress    String
+  type        AnswerType
+  answer      String
 
-  topic Topic? @relation(fields: [topicID], references: [id])
+  topic Topic @relation(fields: [topicID], references: [id])
 
   UserTask UserTask[] @relation(fields: [], references: [])
   PlanTask PlanTask[]
+}
+
+enum AnswerType {
+  ONE
+  MATCH
+  TYPE
 }
 
 model UserTask {
@@ -65,12 +72,12 @@ model UserTask {
 
 model Plan {
   id        String    @id @default(uuid()) @db.Uuid
-  userID    String?   @db.Uuid
+  userID    String    @db.Uuid
   hours     Int?
-  startDate DateTime? @default(now())
+  startDate DateTime  @default(now())
   endDate   DateTime?
 
-  User User? @relation(fields: [userID], references: [id])
+  User User @relation(fields: [userID], references: [id])
 
   Topic    Topic?     @relation(fields: [topicId], references: [id])
   topicId  String?    @db.Uuid

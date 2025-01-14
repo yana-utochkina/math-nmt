@@ -21,7 +21,7 @@ model User {
 
 model Topic {
   id       String @id @default(uuid()) @db.Uuid
-  parentID Int
+  parentID String @default("96a2384c-2c11-45b6-af7d-ca04cdffea84") @db.Uuid
   title    String
 
   Task   Task[]
@@ -39,16 +39,24 @@ model Theory {
 }
 
 model Task {
-  id          String @id @default(uuid()) @db.Uuid
-  topicID     String @db.Uuid
+  id          String     @id @default(uuid()) @db.Uuid
+  topicID     String     @db.Uuid
   description String
   problem     String
   solution    String
+  type        AnswerType
+  answer      String
 
   topic Topic @relation(fields: [topicID], references: [id])
 
   UserTask UserTask[] @relation(fields: [], references: [])
   PlanTask PlanTask[]
+}
+
+enum AnswerType {
+  ONE
+  MATCH
+  TYPE
 }
 
 model UserTask {

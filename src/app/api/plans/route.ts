@@ -1,68 +1,96 @@
 // Create-запит на створення плану (в параметрах hours : int, endDate : DateType????)
-
-import { NextResponse } from "next/server";
+"use server";
 import { prisma } from "../../../lib/db";
+import { NextResponse } from "next/server"
 
-export async function post(request: Request) {
+// export const GET = async () => {
+//     try {
+//         const plans = await prisma.plan.findMany();
+//         return new NextResponse(JSON.stringify(plans), { status: 200 });
+//     }
+//     catch (error: any) {
+//         return new NextResponse("Error in users" + error.message, { status: 500 });
+//     }
+// };
+
+export const GET = async (request: Request) => {
     try {
-        const { hours, endDate } = await request.json();
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get("id");
 
-        if (typeof hours !== 'number' || !(endDate instanceof Date)) {
-            return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+        if (!id) {
+            try {
+                const plans = await prisma.plan.findMany();
+                return new NextResponse(JSON.stringify(plans), { status: 200 });
+            }
+            catch (error: any) {
+                return new NextResponse("Error in users" + error.message, { status: 500 });
+            }
         }
 
-        const newPlan = await prisma.plan.create({
+        const plans = await prisma.plan.findUnique(
+            {
+                where: {
+                    id: id
+                }
+            }
+        );
+        return new NextResponse(JSON.stringify(plans), { status: 200 });
+    }
+    catch (error: any) {
+        return new NextResponse("Error in users" + error.message, { status: 500 });
+    }
+};
+
+
+export const POST = async (request: Request) => {
+    try {
+        const { hours, endDate } = await request.json();
+        const plan = await prisma.plan.create({
             data: {
-                hours: "",
-                endDate: "",
+                hours: hours,
+                endDate: endDate
+            }
+        });
+        return new NextResponse(JSON.stringify({ message: "Plan created", user: plan }), { status: 200 });
+    }
+    catch (error: any) {
+        return new NextResponse("Error in creating plan" + error.message, { status: 500 });
+    }
+};
+
+export const PATCH = async (request: Request) => {
+    try {
+        const { id, hours, endDate } = await request.json();
+        const plan = await prisma.plan.update({
+            where: {
+                id: id
             },
+            data: {
+                hours: hours,
+                endDate: endDate
+            }
         });
 
-        return NextResponse.json(newPlan, { status: 201 });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to create plan' }, { status: 500 });
+        return new NextResponse(JSON.stringify(plan), { status: 200 });
+    }
+    catch (error: any) {
+        return new NextResponse("Error in plans" + error.message, { status: 500 });
     }
 }
 
+export const DELETE = async (request: Request) => {
+    try {
+        const { id } = await request.json();
+        const plan = await prisma.plan.delete({
+            where: {
+                id: id
+            }
+        });
 
-
-//GPT
-// export async function POST(req) {
-//   try {
-//     // Parse request body
-//     const body = await req.json();
-//     const { hours, endDate } = body;
-
-// Validate input
-//     if (!hours || typeof hours !== "number" || hours <= 0) {
-//       return NextResponse.json(
-//         { error: "Invalid or missing 'hours' parameter" },
-//         { status: 400 }
-//       );
-//     }
-
-//     if (!endDate || isNaN(Date.parse(endDate))) {
-//       return NextResponse.json(
-//         { error: "Invalid or missing 'endDate' parameter" },
-//         { status: 400 }
-//       );
-//     }
-
-// Create a new plan
-//     const newPlan = await prisma.plan.create({
-//       data: {
-//         hours,
-//         endDate: new Date(endDate), // Ensure endDate is a valid Date object
-//       },
-//     });
-
-// Return the created plan
-//     return NextResponse.json(newPlan, { status: 201 });
-//   } catch (error) {
-//     console.error("Error creating plan:", error);
-//     return NextResponse.json(
-//       { error: "An error occurred while creating the plan" },
-//       { status: 500 }
-//     );
-//   }
-// }
+        return new NextResponse(JSON.stringify(plan), { status: 200 });
+    }
+    catch (error: any) {
+        return new NextResponse("Error in users" + error.message, { status: 500 });
+    }
+}

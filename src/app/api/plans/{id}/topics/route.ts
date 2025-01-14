@@ -1,26 +1,5 @@
 // Read-запит на діставання json {title, progress(групувати по темі в таблиці UserTopicTask)}
-import { NextResponse } from "next/server";
-import { prisma } from "../../../../../lib/db";
 
-export async function get(req) {
-  const { id } = req.params;
-  const plan = await prisma.plan.findMany({
-    where: {
-      userId: id,
-    },
-    select: {
-      title: true,
-      progress: {
-        select: {
-          topicId: true,
-          progress: true,
-        },
-      },
-    },
-  });
-
-  return NextResponse.json(plan);
-}
 
 
 

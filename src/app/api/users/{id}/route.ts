@@ -7,9 +7,9 @@ import { prisma } from "../../../../lib/db";
 
 // Read-запит на діставання інфи про юзера(для профілю)
 export const GET = async (req: Request) => {
-  const { searchParams } = new URL(req.url);
 try {
   // Getting parameter from a request
+  const { searchParams } = new URL(req.url);
   const userId = searchParams.get("id");
     if (!userId) {
         return new NextResponse(

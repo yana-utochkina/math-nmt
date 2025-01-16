@@ -6,13 +6,13 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/db";
 
 // Read-запит на діставання інфи про юзера(для профілю)
-export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+export const GET = async (req: Request, { params }: { params: { userID: string } }) => {
   try {
-    const { id: userId } = params;
+    const { userID: userId } = params;
 
     if (!userId) {
-      return new NextResponse(
-        JSON.stringify({ error: "User ID is required" }),
+      return NextResponse.json(
+        { error: "User ID is required" },
         { status: 400 }
       );
     }
@@ -30,17 +30,17 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
     });
 
     if (!user) {
-      return new NextResponse(
-        JSON.stringify({ error: "User not found" }),
+      return NextResponse.json(
+        { error: "User not found" },
         { status: 404 }
       );
     }
 
-    return new NextResponse(JSON.stringify(user), { status: 200 });
+    return NextResponse.json(user, { status: 200 });
   } catch (error: any) {
     console.error("Error fetching user:", error);
-    return new NextResponse(
-      JSON.stringify({ error: "Failed to fetch user" }),
+    return NextResponse.json(
+      { error: "Failed to fetch user" },
       { status: 500 }
     );
   }
@@ -57,8 +57,8 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
     const { id: userId } = params;
 
     if (!userId) {
-      return new NextResponse(
-        JSON.stringify({ error: "User ID is required" }),
+      return NextResponse.json(
+        { error: "User ID is required" },
         { status: 400 }
       );
     }
@@ -66,19 +66,15 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
     const { firstName, nickname } = await req.json();
 
     if (firstName && !isValidName(firstName)) {
-      return new NextResponse(
-        JSON.stringify({
-          error: "Name must include: A-Z,a-z,0-9 and must be up to 20 symbols",
-        }),
+      return NextResponse.json(
+        { error: "Name must include: A-Z,a-z,0-9 and must be up to 20 symbols",},
         { status: 400 }
       );
     }
 
     if (nickname && !isValidName(nickname)) {
-      return new NextResponse(
-        JSON.stringify({
-          error: "Nickname must include: A-Z,a-z,0-9 and must be up to 20 symbols",
-        }),
+      return NextResponse.json(
+        { error: "Nickname must include: A-Z,a-z,0-9 and must be up to 20 symbols",},
         { status: 400 }
       );
     }
@@ -91,11 +87,11 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
       },
     });
 
-    return new NextResponse(JSON.stringify(updatedUser), { status: 200 });
+    return NextResponse.json(updatedUser, { status: 200 });
   } catch (error: any) {
     console.error("Error updating user:", error);
-    return new NextResponse(
-      JSON.stringify({ error: "Failed to update user" }),
+    return NextResponse.json(
+      { error: "Failed to update user" },
       { status: 500 }
     );
   }

@@ -71,8 +71,8 @@ export const POST = async (req: Request) => {
       });
       
 
-    return new NextResponse(
-      JSON.stringify({ message: "User is created", user: newUser}),
+    return NextResponse.json(
+      { message: "User is created", user: newUser},
       { status: 200 });
 
   } catch (error: any) {

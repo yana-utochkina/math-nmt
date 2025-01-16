@@ -26,10 +26,10 @@ export const GET = async (request: Request, contex: any) => {
 };
 
 
-export const PATCH = async (request: Request) => {
+export const PATCH = async (request: Request, context: any) => {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("planID");
+    const { params } = context;
+    const id = params.planID;
     const { hours, endDate } = await request.json();
 
     const plan = await prisma.plan.update({
@@ -42,6 +42,23 @@ export const PATCH = async (request: Request) => {
       }
     });
     return NextResponse.json(plan, { status: 200 });
+  }
+  catch (error: any) {
+    return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
+  }
+};
+
+export const DELETE = async (request: Request, context: any) => {
+  try {
+    const { params } = context;
+    const id = params.planID;
+
+    await prisma.plan.delete({
+      where: {
+        id: id
+      }
+    });
+    return NextResponse.json({ message: `Plan with id ${id} deleted` }, { status: 200 });
   }
   catch (error: any) {
     return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });

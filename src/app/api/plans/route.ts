@@ -1,4 +1,5 @@
 // Create-запит на створення плану (в параметрах hours : int, endDate : DateType????)
+// Create-запит на створення плану (в параметрах hours : int, endDate : DateType????)
 "use server";
 import { Plan } from "@prisma/client";
 import { prisma } from "../../../lib/db";

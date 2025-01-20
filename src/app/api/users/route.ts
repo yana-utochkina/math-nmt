@@ -71,8 +71,8 @@ export const POST = async (req: Request) => {
       });
       
 
-    return new NextResponse(
-      JSON.stringify({ message: "User is created", user: newUser}),
+    return NextResponse.json(
+      { message: "User is created", user: newUser},
       { status: 200 });
 
   } catch (error: any) {
@@ -82,7 +82,7 @@ export const POST = async (req: Request) => {
         JSON.stringify({ error: "This email has already been registered" }),
         { status: 409 });
     }
-
+    console.error("Error: ", error);
     return new NextResponse(
       JSON.stringify({ error: "Failed to add user" }),
       { status: 500 });
@@ -111,9 +111,58 @@ export async function GET() {
 
     return NextResponse.json(users, { status: 200 });
   } catch (error: any) {
+    console.error("Error: ", error);
     return new NextResponse(
       JSON.stringify({ error: "Failed to fetch users" }),
       { status: 500 }
     );
   }
 }
+
+export async function PATCH() {
+  return new NextResponse(`Not implemented error`, { status: 501 });
+}
+
+export async function DELETE() {
+  return new NextResponse(`Not implemented error`, { status: 501 });
+}
+
+// export const DELETE = async (req: Request) => {
+//   try {
+//     // Видалення всіх користувачів, а також всіх пов'язаних записів у таблицях, таких як 'Plan', 'UserTask' і т.д.
+//     const deletedUsers = await prisma.user.deleteMany({
+//       where: {},
+//     });
+
+//     // Видалення всіх планів, пов'язаних з користувачами
+//     await prisma.plan.deleteMany({
+//       where: {},
+//     });
+
+//     // Ви також можете видаляти інші пов'язані таблиці, як UserTask, PlanTask і т.д., якщо потрібно.
+//     await prisma.userTask.deleteMany({
+//       where: {},
+//     });
+
+//     await prisma.planTask.deleteMany({
+//       where: {},
+//     });
+
+//     // Повертаємо успішну відповідь
+//     return new NextResponse(
+//       JSON.stringify({
+//         message: "All users and related data deleted successfully",
+//         count: deletedUsers.count,
+//       }),
+//       { status: 200 }
+//     );
+//   } catch (error: any) {
+//     console.error("Error in DELETE request:", error);
+//     return new NextResponse(
+//       JSON.stringify({ message: "Failed to delete users and related data", error: error.message }),
+//       { status: 500 }
+//     );
+//   }
+// };
+
+

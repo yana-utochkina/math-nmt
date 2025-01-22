@@ -8,7 +8,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/db";
 //import bcrypt from "bcrypt";
 
-
 function isValidPassword(password: string): boolean {
   const passwordRegex = /^[A-Za-z0-9]+$/;
   return passwordRegex.test(password) && password.length >= 8 && password.length <= 20;
@@ -119,50 +118,33 @@ export async function GET() {
   }
 }
 
+//Delete запит (DELETE) на видалення списку юзерів
+export const DELETE = async () => {
+  try {
+    // Виконуємо транзакцію для видалення всіх даних, пов'язаних із користувачами
+    await prisma.$transaction([
+      prisma.userTask.deleteMany({}), // Видаляємо всі записи UserTask
+      prisma.planTask.deleteMany({}), // Видаляємо всі записи PlanTask
+      prisma.plan.deleteMany({}),     // Видаляємо всі записи Plan
+      prisma.user.deleteMany({}),     // Видаляємо всіх користувачів
+    ]);
+
+    return NextResponse.json(
+      { message: "All users and related data successfully deleted" },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("Error deleting all users and related data:", error);
+
+    return NextResponse.json(
+      { error: "Failed to delete all users and related data" },
+      { status: 500 }
+    );
+  }
+};
+
 export async function PATCH() {
   return new NextResponse(`Not implemented error`, { status: 501 });
 }
-
-export async function DELETE() {
-  return new NextResponse(`Not implemented error`, { status: 501 });
-}
-
-// export const DELETE = async (req: Request) => {
-//   try {
-//     // Видалення всіх користувачів, а також всіх пов'язаних записів у таблицях, таких як 'Plan', 'UserTask' і т.д.
-//     const deletedUsers = await prisma.user.deleteMany({
-//       where: {},
-//     });
-
-//     // Видалення всіх планів, пов'язаних з користувачами
-//     await prisma.plan.deleteMany({
-//       where: {},
-//     });
-
-//     // Ви також можете видаляти інші пов'язані таблиці, як UserTask, PlanTask і т.д., якщо потрібно.
-//     await prisma.userTask.deleteMany({
-//       where: {},
-//     });
-
-//     await prisma.planTask.deleteMany({
-//       where: {},
-//     });
-
-//     // Повертаємо успішну відповідь
-//     return new NextResponse(
-//       JSON.stringify({
-//         message: "All users and related data deleted successfully",
-//         count: deletedUsers.count,
-//       }),
-//       { status: 200 }
-//     );
-//   } catch (error: any) {
-//     console.error("Error in DELETE request:", error);
-//     return new NextResponse(
-//       JSON.stringify({ message: "Failed to delete users and related data", error: error.message }),
-//       { status: 500 }
-//     );
-//   }
-// };
 
 

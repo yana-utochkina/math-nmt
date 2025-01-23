@@ -1,4 +1,4 @@
-/* eslint-disable rule-name */
+/* eslint-disable no-explicit-any */
 import { prisma } from "../../../../lib/db";
 import { NextResponse } from "next/server"
 
@@ -43,4 +43,4 @@ export const PATCH = async (request: Request) => {
     return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
   }
 }
-/* eslint-enable rule-name */
+/* eslint-enable no-explicit-any */

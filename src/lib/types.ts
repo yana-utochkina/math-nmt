@@ -1,5 +1,11 @@
 export type Plan = {
-    hours: number,
-    endDate: Date,
-    userID: string
+    id?: string,
+    hours?: number,
+    endDate?: Date,
+    userID?: string
+};
+
+export type Task = {
+    id?: string,
+    topicID?: string,
 }

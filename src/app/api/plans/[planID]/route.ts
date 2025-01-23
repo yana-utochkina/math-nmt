@@ -1,8 +1,4 @@
-// Read-запит на отримання плану : (як виглядає план) {діставати прогрес по кожній темі}
-// Update-запит на зміну плану (в параметрах hours : int, endDate : DateType????)
-// Delete на видалення з бд
-
-"use server";
+/* eslint-disable rule-name */
 import { prisma } from "../../../../lib/db";
 import { NextResponse } from "next/server"
 
@@ -47,3 +43,4 @@ export const PATCH = async (request: Request) => {
     return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
   }
 }
+/* eslint-enable rule-name */

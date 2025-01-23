@@ -1,12 +1,13 @@
 import { prisma } from "../../../../lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request, context: { params: { topicID: string } }) {
     try {
-        const { params } = context;
+        const { params } = await context;
+        const { topicID } = await params;
         const topic = await prisma.topic.findUniqueOrThrow({
             where: {
-                id: params.topicID,
+                id: topicID,
             }
         });
         return NextResponse.json(topic, { status: 200 });

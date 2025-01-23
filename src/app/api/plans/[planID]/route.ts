@@ -1,16 +1,16 @@
-/* eslint-disable no-explicit-any */
 import { prisma } from "../../../../lib/db";
 import { NextResponse } from "next/server"
 
-export const GET = async (request: Request, contex: any) => {
+export const GET = async (request: Request, contex: { params: { planID: string } }) => {
   try {
-    const { params } = contex;
-    const id = params.planID;
+    // console.log(typeof contex);
+    const { params } = await contex;
+    const { planID } = await params;
 
     const plan = await prisma.plan.findUniqueOrThrow(
       {
         where: {
-          id: id
+          id: planID,
         }
       }
     );
@@ -43,4 +43,3 @@ export const PATCH = async (request: Request) => {
     return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
   }
 }
-/* eslint-enable no-explicit-any */

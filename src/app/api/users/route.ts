@@ -1,9 +1,3 @@
-//Тут створити: 
-// 1)Create запит(POST) на створення юзера в бд (в параметрах пошта і пароль)
-// 2)Read запит(GET) на отримання списку юзерів
-//   Update запит (PUT) на оновлення списку юзерів
-//   Delete запит (DELETE) на видалення списку юзерів
-
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/db";
 //import bcrypt from "bcrypt";
@@ -24,55 +18,53 @@ function isValidName(name: string): boolean {
   return name.length <= 20 && nameRegex.test(name);
 };
 
-
-// Create запит(POST) на створення юзера в бд (в параметрах пошта і пароль)
-export const POST = async (req: Request) => {
+export async function POST(request: Request) {
   try {
-    const { email, password, repPassword, nickname } = await req.json();
+    const { email, password, repPassword, nickname } = await request.json();
 
-  if (!email || !password || !repPassword || !nickname) {
-    return new NextResponse(
-     JSON.stringify({ message: "Fill in all fields" }),
-      { status: 400 });
-  }
+    if (!email || !password || !repPassword || !nickname) {
+      return new NextResponse(
+        JSON.stringify({ message: "Fill in all fields" }),
+        { status: 400 });
+    }
 
-  if (!isValidEmail(email)) {
-    return new NextResponse(
-      JSON.stringify({ message: "Email is invalid" }),
-    { status: 400});
-  }
+    if (!isValidEmail(email)) {
+      return new NextResponse(
+        JSON.stringify({ message: "Email is invalid" }),
+        { status: 400 });
+    }
 
-  if (!isValidPassword(password)) {
-    return new NextResponse(
-      JSON.stringify({ message: "The password must include: A-Z,a-z,0-9 and must have a length 8-20 symbols" }),
-    { status: 400});
-  }
+    if (!isValidPassword(password)) {
+      return new NextResponse(
+        JSON.stringify({ message: "The password must include: A-Z,a-z,0-9 and must have a length 8-20 symbols" }),
+        { status: 400 });
+    }
 
-  if (!isValidName(nickname)) {
-    return new NextResponse(
-      JSON.stringify({ message: "Name must include: A-Z,a-z,0-9 and must be up to 20 symbols" }),
-    { status: 400});
-  }
+    if (!isValidName(nickname)) {
+      return new NextResponse(
+        JSON.stringify({ message: "Name must include: A-Z,a-z,0-9 and must be up to 20 symbols" }),
+        { status: 400 });
+    }
 
-  if(password!=repPassword) {
-    return new NextResponse(
-      JSON.stringify({ message: "Check your password" }),
-    { status: 400});
-  }
+    if (password != repPassword) {
+      return new NextResponse(
+        JSON.stringify({ message: "Check your password" }),
+        { status: 400 });
+    }
     //const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
-        data: {
-          email: email,
-          password: password,
-          nickname: nickname,
-          firstName: " "
-        }
-      });
-      
+      data: {
+        email: email,
+        password: password,
+        nickname: nickname,
+        firstName: " "
+      }
+    });
+
 
     return NextResponse.json(
-      { message: "User is created", user: newUser},
+      { message: "User is created", user: newUser },
       { status: 200 });
 
   } catch (error: any) {

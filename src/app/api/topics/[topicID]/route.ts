@@ -1,5 +1,6 @@
 import { prisma } from "../../../../lib/db";
 import { NextResponse } from "next/server";
+import { Topic } from "../../../../lib/types";
 
 export async function GET(request: Request, context: { params: { topicID: string } }) {
     try {
@@ -13,58 +14,54 @@ export async function GET(request: Request, context: { params: { topicID: string
         return NextResponse.json(topic, { status: 200 });
     }
     catch (error) {
-        return NextResponse.json(`Topic ID error: ${error.message}`, { status: 404 });
+        return NextResponse.json({ error: `Topic ID error: ${error.message}` }, { status: 404 });
     }
 }
 
-export async function POST() {
-    return new NextResponse(`Not implemented error`, { status: 501 });
-}
-
-export async function PUT(request: Request, context: any) {
+export async function PUT(request: Request, context: { params: { topicID: string } }) {
     try {
-        const { params } = context;
+        const { params } = await context;
+        const { topicID } = await params;
 
         const { searchParams } = new URL(request.url);
         const parentID = searchParams.get("parentID");
         const title = searchParams.get("title");
 
-        const updatedData: { parentID?: string; title?: string } = {};
+        const topic: Topic = {} as Topic;
 
-        if (parentID) {
-            updatedData.parentID = parentID;
-        }
-        if (title) {
-            updatedData.title = title;
-        }
+        if (!parentID) throw new Error("Require parentID for topic");
+        if (!title) throw new Error("Require title for topic");
+        topic.parentID = parentID;
+        topic.title = title;
 
         const updatedTopic = await prisma.topic.update({
             where: {
-                id: params.topicID,
+                id: topicID,
             },
-            data: updatedData,
+            data: topic,
         });
 
         return NextResponse.json(updatedTopic, { status: 200 })
     }
-    catch {
-        return new NextResponse(`Wrong topic updating params`, { status: 501 }); // знайти код
+    catch (error) {
+        return NextResponse.json({ error: `Topic error: ${error.message}` }, { status: 501 });
     }
 }
 
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request, context: { params: { topicID: string } }) {
     try {
         const { params } = context;
+        const { topicID } = params;
 
         const deletedTopic = await prisma.topic.delete({
             where: {
-                id: params.topicID,
+                id: topicID,
             },
         });
 
         return NextResponse.json(deletedTopic, { status: 200 });
     }
     catch (error) {
-        return new NextResponse(`Topic ID error: ${error.message}`, { status: 404 });
+        return NextResponse.json({ error: `Topic delete error: ${error.message}` }, { status: 400 });
     }
 }

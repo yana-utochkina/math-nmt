@@ -1,9 +1,8 @@
 import { prisma } from "../../../../lib/db";
 import { NextResponse } from "next/server"
 
-export const GET = async (request: Request, contex: { params: { planID: string } }) => {
+export async function GET(request: Request, contex: { params: { planID: string } }) {
   try {
-    // console.log(typeof contex);
     const { params } = await contex;
     const { planID } = await params;
 
@@ -16,13 +15,12 @@ export const GET = async (request: Request, contex: { params: { planID: string }
     );
     return NextResponse.json(plan, { status: 200 });
   }
-  catch (error: any) {
+  catch (error) {
     return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
   }
 };
 
-
-export const PATCH = async (request: Request) => {
+export async function PATCH(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("planID");
@@ -39,7 +37,7 @@ export const PATCH = async (request: Request) => {
     });
     return NextResponse.json(plan, { status: 200 });
   }
-  catch (error: any) {
+  catch (error) {
     return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
   }
 }

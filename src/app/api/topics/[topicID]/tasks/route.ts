@@ -33,7 +33,7 @@ export async function POST(request: Request) {
                 description: task.description,
                 problem: task.problem,
                 solution: task.solution,
-                type: task.type,
+                type: AnswerType.TYPE,
                 answer: task.answer,
             }
         })

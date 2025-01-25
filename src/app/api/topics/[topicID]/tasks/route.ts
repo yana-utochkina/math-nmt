@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/db";
-import { Task } from "../../../../../lib/types";
-import { AnswerType } from "@prisma/client";
+import { AnswerType, Task } from "@prisma/client";
 
 export async function GET(request: Request, context: { params: { topicID: string } }) {
     try {
@@ -28,19 +27,12 @@ export async function POST(request: Request) {
         const task: Task = body;
 
         const newTask = await prisma.task.create({
-            data: {
-                topicID: task.topicID,
-                description: task.description,
-                problem: task.problem,
-                solution: task.solution,
-                type: AnswerType.TYPE,
-                answer: task.answer,
-            }
+            data: task,
         })
 
         return NextResponse.json(newTask, { status: 201 });
     }
     catch (error) {
-        return NextResponse.json(`Wrong task parameters: ${error.message}`, { status: 400 });
+        return NextResponse.json({ error: `Wrong task parameters: ${error.message}` }, { status: 400 });
     }
 }

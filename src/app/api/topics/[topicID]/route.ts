@@ -1,6 +1,6 @@
+import { Topic } from "@prisma/client";
 import { prisma } from "../../../../lib/db";
 import { NextResponse } from "next/server";
-import { Topic } from "../../../../lib/types";
 
 export async function GET(request: Request, context: { params: { topicID: string } }) {
     try {

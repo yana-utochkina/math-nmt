@@ -23,16 +23,12 @@ export async function PUT(request: Request, context: { params: { topicID: string
         const { params } = await context;
         const { topicID } = await params;
 
-        const { searchParams } = new URL(request.url);
-        const parentID = searchParams.get("parentID");
-        const title = searchParams.get("title");
+        const body = await request.json();
 
-        const topic: Topic = {} as Topic;
+        if (!body.parentID) throw new Error("Require parentID");
+        if (!body.title) throw new Error("Require title");
 
-        if (!parentID) throw new Error("Require parentID for topic");
-        if (!title) throw new Error("Require title for topic");
-        topic.parentID = parentID;
-        topic.title = title;
+        const topic: Topic = body;
 
         const updatedTopic = await prisma.topic.update({
             where: {
@@ -41,7 +37,30 @@ export async function PUT(request: Request, context: { params: { topicID: string
             data: topic,
         });
 
-        return NextResponse.json(updatedTopic, { status: 200 })
+        return NextResponse.json(updatedTopic, { status: 200 });
+    }
+    catch (error) {
+        return NextResponse.json({ error: `Topic error: ${error.message}` }, { status: 501 });
+    }
+}
+
+export async function PATCH(request: Request, context: { params: { topicID: string } }) {
+    try {
+        const { params } = await context;
+        const { topicID } = await params;
+
+        const body = await request.json();
+
+        const topic: Topic = body;
+
+        const updatedTopic = await prisma.topic.update({
+            where: {
+                id: topicID,
+            },
+            data: topic,
+        });
+
+        return NextResponse.json(updatedTopic, { status: 200 });
     }
     catch (error) {
         return NextResponse.json({ error: `Topic error: ${error.message}` }, { status: 501 });

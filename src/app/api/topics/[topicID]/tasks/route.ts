@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/db";
-import { AnswerType, Task } from "@prisma/client";
+import { Task } from "@prisma/client";
 
 export async function GET(request: Request, context: { params: { topicID: string } }) {
     try {
@@ -23,6 +23,13 @@ export async function GET(request: Request, context: { params: { topicID: string
 export async function POST(request: Request) {
     try {
         const body = await request.json();
+
+        if (!body.topicID) throw new Error("Require topicID");
+        if (!body.description) throw new Error("Require description");
+        if (!body.problem) throw new Error("Require problem");
+        if (!body.solution) throw new Error("Require solution");
+        if (!body.type) throw new Error("Require type");
+        if (!body.answer) throw new Error("Require answer");
 
         const task: Task = body;
 

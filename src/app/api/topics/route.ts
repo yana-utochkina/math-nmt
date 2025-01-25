@@ -14,12 +14,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const { searchParams } = new URL(request.url);
+        const body = await request.json();
 
-        const topic: Topic = {} as Topic;
+        if (!body.parentID) throw new Error("Require parentID");
+        if (!body.title) throw new Error("Require title");
 
-        topic.parentID = searchParams.get("parentID");
-        topic.title = searchParams.get("title");
+        const topic: Topic = body;
 
         const newTopic = await prisma.topic.create({ data: topic });
 

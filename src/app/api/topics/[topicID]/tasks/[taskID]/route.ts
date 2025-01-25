@@ -24,11 +24,40 @@ export async function PUT(request: Request, context: { params: { topicID: string
     try {
         const { params } = context;
         const { topicID, taskID } = await params;
+
+        const body = await request.json();
+
+        if (!body.description) throw new Error("Require description");
+        if (!body.problem) throw new Error("Require problem");
+        if (!body.solution) throw new Error("Require solution");
+        if (!body.type) throw new Error("Require type");
+        if (!body.answer) throw new Error("Require answer");
+
+        const task: Task = body;
+
+        const updatedTask = await prisma.task.update({
+            where: {
+                id: taskID,
+                topicID: topicID
+            },
+            data: task,
+        });
+
+        return NextResponse.json(updatedTask, { status: 200 });
+    }
+    catch (error) {
+        return NextResponse.json({ error: `Update Task error: ${error.message}` }, { status: 404 });
+    }
+}
+
+export async function PATCH(request: Request, context: { params: { topicID: string, taskID: string } }) {
+    try {
+        const { params } = context;
+        const { topicID, taskID } = await params;
+
         const body = await request.json();
 
         const task: Task = body;
-        task.topicID = topicID;
-        task.id = taskID;
 
         const updatedTask = await prisma.task.update({
             where: {

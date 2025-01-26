@@ -52,9 +52,9 @@ const isValidName = (name: string): boolean => {
 };
 
 // Update-запит на зміну профіля (в профілі можна змінити firstName, nickname)
-export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
+export const PUT = async (req: Request, { params }: { params: { userID: string } }) => {
   try {
-    const { id: userId } = params;
+    const { userID: userId } = params;
 
     if (!userId) {
       return NextResponse.json(
@@ -97,64 +97,63 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
   }
 };
 
-export const DELETE = async (req: Request, { params }: { params: { id: string } }) => {}
+// Delete-запит на видалення з бд
+export const DELETE = async (req: Request, { params }: { params: { userID: string } }) => {
+  try {
+    const { userID: userId } = params;
 
-export const POST = async (req: Request, { params }: { params: { id: string } }) => {}
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User ID is required' },
+        { status: 400 }
+      );
+    }
 
-  // Delete-запит на видалення з бд
+    // Перевіряємо, чи існує користувач перед видаленням
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
 
-  // export const DELETE = async (req: Request, { params }: { params: { id: string } }) => {
-  //   try {
-  //     const { id: userId } = params;
-  
-  //     if (!userId) {
-  //       return new NextResponse(
-  //         JSON.stringify({ message: "User ID is required" }),
-  //         { status: 400 }
-  //       );
-  //     }
-  
-  //     // Проверяем, существует ли пользователь
-  //     const userExists = await prisma.user.findUnique({
-  //       where: { id: userId },
-  //     });
-  
-  //     if (!userExists) {
-  //       return new NextResponse(
-  //         JSON.stringify({ error: "User not found" }),
-  //         { status: 404 }
-  //       );
-  //     }
-  
-  //     // Удаляем все связанные с пользователем записи в таблице Plan
-  //     await prisma.plan.deleteMany({
-  //       where: { userID: userId },
-  //     });
-  
-  //     // Удаляем все связанные с пользователем записи в таблице UserTask
-  //     await prisma.userTask.deleteMany({
-  //       where: { userID: userId },
-  //     });
+    if (!existingUser) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
 
-  //     // Удаляем все связанные с пользователем записи в таблице PlanTask
-  //     await prisma.planTask.deleteMany({
-  //       where: { planID: { in: (await prisma.plan.findMany({ where: { userID: userId }, select: { id: true } })).map(plan => plan.id) } },
-  //     });
-  
-  //     // После того как связанные записи удалены, удаляем самого пользователя
-  //     const deletedUser = await prisma.user.delete({
-  //       where: { id: userId },
-  //     });
-  
-  //     return new NextResponse(
-  //       JSON.stringify({ message: "User and related data deleted", user: deletedUser }),
-  //       { status: 200 }
-  //     );
-  //   } catch (error: any) {
-  //     console.error("Error deleting user and related data:", error);
-  //     return new NextResponse(
-  //       JSON.stringify({ error: "Failed to delete user and related data", details: error.message }),
-  //       { status: 500 }
-  //     );
-  //   }
-  // };
+    //видалення супутніх даних
+    await prisma.$transaction([
+      prisma.userTask.deleteMany({
+        where: { userID: userId },
+      }),
+      prisma.planTask.deleteMany({
+        where: { userId: userId },
+      }),
+      prisma.plan.deleteMany({
+        where: { userID: userId },
+      }),
+      // prisma.user.delete({
+      //   where: { id: userId },
+      // }),
+    ]);
+
+    //Видалення користувача
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+
+    return NextResponse.json(
+      { message: `User with ID ${userId} successfully deleted` },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error('Error deleting user:', error);
+
+    return NextResponse.json(
+      { error: 'Failed to delete user' },
+      { status: 500 }
+    );
+  }
+};
+
+export const POST = async (req: Request, { params }: { params: { userID: string } }) => {}

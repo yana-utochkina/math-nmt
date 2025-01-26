@@ -1,95 +1,88 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import EducationalPrograms from "./ui/startPage/gridEducationalPrograms";
+import NavigationSection from "./ui/startPage/NavigationCard";
 
-export default function Home() {
+export default function Page() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Working!! Featureewkbvkenvj is here. Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+    <>
+      {/* Хедер */}
+      <header className="bg-white py-5 border-bottom">
+        <div className="container px-5 text-center">
+          <div className="row justify-content-center">
+            <div className="col-lg-8">
+              <h1 className="fw-bold display-4 text-primary mb-2">Maths</h1>
+              <p className="lead text-dark mb-4">
+                онлайн-тести НМТ з математики
+              </p>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </header>
+
+      {/* Основна частина з кнопками */}
+      <section className="py-5">
+        {/* <div className="container px-5">
+          <div className="row justify-content-center">
+            <div className="col-md-4 mb-4 d-flex align-items-center justify-content-center">
+              <a
+                href="#!"
+                className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center"
+                style={{height: "100px", width: "300px"}}
+              >
+                Швидкий тест у форматі НМТ
+              </a>
+            </div>
+            <div className="col-md-4 mb-4 d-flex align-items-center justify-content-center">
+              <a
+                href="/personal_program"
+                className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center"
+                style={{height: "100px", width: "300px"}}
+              >
+                Створити індивідуальну програму
+              </a>
+            </div>
+            <div className="col-md-4 mb-4 d-flex align-items-center justify-content-center">
+              <a
+                href="/type_of_problems"
+                className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center"
+                style={{height: "100px", width: "300px"}}
+              >
+                Розв’язування задач
+              </a>
+            </div>
+          </div>
+        </div> */}
+        <NavigationSection />
+      </section>
+
+      {/* Секція "Чому обрати нас?" */}
+      <section className="py-5">
+        <EducationalPrograms />
+        {/* <div className="container px-5">
+          <h2 className="fw-bolder mb-4 text-center text-primary">Чому обрати нас?</h2>
+          <div className="row gx-5 gy-4 justify-content-center">
+            <div className="col-md-4">
+              <h3 className="h5 fw-bold">Інтерактивні тести</h3>
+              <p className="mb-0">Велика кількість тестових завдань, що охоплюють всі теми НМТ</p>
+            </div>
+            <div className="col-md-4">
+              <h3 className="h5 fw-bold">Миттєвий зворотний зв’язок</h3>
+              <p className="mb-0">Автоматичне оцінювання результатів та пояснення правильних відповідей</p>
+            </div>
+            <div className="col-md-4">
+              <h3 className="h5 fw-bold">Аналіз прогресу</h3>
+              <p className="mb-0">Відстеження ваших досягнень та визначення слабких місць</p>
+            </div>
+            <div className="col-md-4 mt-4">
+              <h3 className="h5 fw-bold">Персоналізовані рекомендації</h3>
+              <p className="mb-0">Пропозиції щодо додаткових тестів на основі ваших результатів</p>
+            </div>
+            <div className="col-md-4 mt-4">
+              <h3 className="h5 fw-bold">Доступність 24/7</h3>
+              <p className="mb-0">Навчайтеся у зручний для вас час та з будь-якого місця</p>
+            </div>
+          </div>
+        </div> */}
+      </section>
+    </>
   );
 }

@@ -84,6 +84,8 @@ export async function DELETE(request: Request, context: { params: { userID: stri
         id: userID,
       }
     });
+
+    return NextResponse.json(deletedUser, { status: 200 });
   }
   catch (error) {
     return NextResponse.json({ error: `Failed to delete user: ${error.message}` }, { status: 500 });

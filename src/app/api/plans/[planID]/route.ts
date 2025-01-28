@@ -1,5 +1,7 @@
+import { Plan } from "@prisma/client";
 import { prisma } from "../../../../lib/db";
 import { NextResponse } from "next/server"
+import { endDateValidator, hoursValidator, MIN_HOURS } from "../route";
 
 export async function GET(request: Request, contex: { params: { planID: string } }) {
   try {
@@ -20,22 +22,42 @@ export async function GET(request: Request, contex: { params: { planID: string }
   }
 };
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: Request, contex: { params: { planID: string } }) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("planID");
-    const { hours, endDate } = await request.json();
+    const { params } = await contex;
+    const { planID } = await params;
 
-    const plan = await prisma.plan.update({
+    const body = await request.json();
+
+    hoursValidator(body.hours);
+    endDateValidator(body.endDate);
+
+    const plan: Plan = body;
+
+    const updatePlan = await prisma.plan.update({
       where: {
-        id: id
+        id: planID
       },
-      data: {
-        hours: hours,
-        endDate: endDate
+      data: plan
+    });
+    return NextResponse.json(updatePlan, { status: 200 });
+  }
+  catch (error) {
+    return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
+  }
+}
+
+export async function DELETE(request: Request, contex: { params: { planID: string } }) {
+  try {
+    const { params } = await contex;
+    const { planID } = await params;
+
+    const deletedPlan = await prisma.plan.delete({
+      where: {
+        id: planID
       }
     });
-    return NextResponse.json(plan, { status: 200 });
+    return NextResponse.json(deletedPlan, { status: 200 });
   }
   catch (error) {
     return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });

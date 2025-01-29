@@ -1,22 +1,7 @@
 import { Plan } from "@prisma/client";
 import { prisma } from "@db";
 import { NextResponse } from "next/server"
-
-export const MIN_DAYS = 80;
-
-export const MIN_HOURS = 80;
-
-export function endDateValidator(date: Date) {
-    const now: Date = new Date();
-    const newDate: Date = new Date(now);
-    newDate.setDate(newDate.getDate() + MIN_DAYS);
-    const date1: Date = new Date(date);
-    if (date1 < newDate) throw new Error(`Minimum end date is ${newDate} or min amount of days is ${MIN_DAYS}`);
-}
-
-export function hoursValidator(hours: number) {
-    if (hours < MIN_HOURS) throw new Error(`Minimum amount of hours equals ${MIN_HOURS}`);
-}
+import { isValidEndDate, isValidHours, MIN_DAYS, MIN_HOURS } from "@validator/plan"
 
 export async function GET() {
     try {
@@ -35,8 +20,8 @@ export async function POST(request: Request) {
 
         if (!body.userID) throw new Error("Require userID");
 
-        hoursValidator(body.hours);
-        endDateValidator(body.endDate);
+        if (!isValidEndDate(body.endDate)) throw new Error(`Invalid end date. Minimum days require ${MIN_DAYS}`);
+        if (!isValidHours(body.hours)) throw new Error(`Invalid amount of hours. Minimum is ${MIN_HOURS}`);
 
         const plan: Plan = body;
 

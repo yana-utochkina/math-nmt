@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@db";
-import { isValidEmail, isValidName, isValidPassword } from "../route";
+import { isValidNickname, isValidEmail, isValidPassword } from "@validator/user";
 import { User } from "@prisma/client";
 
 export async function GET(req: Request, context: { params: { userID: string } }) {
@@ -31,7 +31,7 @@ export async function PUT(request: Request, context: { params: { userID: string 
     if (!body.email) throw new Error("Require email");
     if (!body.password) throw new Error("Require password");
 
-    if (!isValidName(body.nickname)) throw new Error("Nickname must include: A-Z,a-z,0-9 and must be up to 20 symbols");
+    if (!isValidNickname(body.nickname)) throw new Error("Nickname must include: A-Z,a-z,0-9 and must be up to 20 symbols");
     if (!isValidEmail(body.email)) throw new Error("Invalid email");
     if (!isValidPassword(body.password)) throw new Error("The password must include: A-Z,a-z,0-9 and must have a length 8-20 symbols");
 
@@ -56,7 +56,7 @@ export async function PATCH(request: Request, context: { params: { userID: strin
 
     const body = await request.json();
 
-    if (body.nickname) if (!isValidName(body.nickname)) throw new Error("Nickname must include: A-Z,a-z,0-9 and must be up to 20 symbols");
+    if (body.nickname) if (!isValidNickname(body.nickname)) throw new Error("Nickname must include: A-Z,a-z,0-9 and must be up to 20 symbols");
     if (body.email) if (!isValidEmail(body.email)) throw new Error("Invalid email");
     if (!body.password) if (!isValidPassword(body.password)) throw new Error("The password must include: A-Z,a-z,0-9 and must have a length 8-20 symbols");
 

@@ -1,5 +1,5 @@
 import { Plan } from "@prisma/client";
-import { prisma } from "../../../lib/db";
+import { prisma } from "@db";
 import { NextResponse } from "next/server"
 
 export const MIN_DAYS = 80;

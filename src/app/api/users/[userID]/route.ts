@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/db";
+import { prisma } from "@db";
 import { isValidEmail, isValidName, isValidPassword } from "../route";
 import { User } from "@prisma/client";
 

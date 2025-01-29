@@ -1,5 +1,5 @@
 import { Plan } from "@prisma/client";
-import { prisma } from "../../../../lib/db";
+import { prisma } from "@db";
 import { NextResponse } from "next/server"
 import { endDateValidator, hoursValidator } from "../route";
 

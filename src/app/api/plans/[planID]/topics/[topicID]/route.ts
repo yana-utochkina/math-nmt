@@ -1,6 +1,6 @@
 // Read-запит на діставання фул інфи про тему (json{ title, theory, progress })
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../../lib/db";
+import { prisma } from "@db";
 
 export async function get(req) {
   const { id } = req.params;
@@ -16,7 +16,19 @@ export async function get(req) {
   return NextResponse.json(topic);
 }
 
-
+// const user_progress = await prisma.task.findMany({
+//   relationLoadStrategy: "join",
+//   include: {
+//       UserTask: {
+//           where: {
+//               userID: userID
+//           },
+//           select: {
+//               passed_on: true
+//           }
+//       },
+//   }
+// })
 
 //GPT
 // export async function GET(req, { params }) {

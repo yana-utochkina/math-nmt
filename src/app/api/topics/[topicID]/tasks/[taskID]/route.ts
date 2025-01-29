@@ -1,4 +1,4 @@
-import { prisma } from "../../../../../../lib/db";
+import { prisma } from "@db";
 import { NextResponse } from "next/server";
 import { Task } from "@prisma/client";
 

@@ -1,7 +1,7 @@
 import { Plan } from "@prisma/client";
 import { prisma } from "@db";
 import { NextResponse } from "next/server"
-import { endDateValidator, hoursValidator } from "../route";
+import { isValidEndDate, isValidHours, MIN_DAYS, MIN_HOURS } from "@validator/plan";
 
 export async function GET(request: Request, contex: { params: { planID: string } }) {
   try {
@@ -32,8 +32,9 @@ export async function PUT(request: Request, contex: { params: { planID: string }
     if (!body.hours) throw new Error("Require hours");
     if (!body.endDate) throw new Error("Require endDate");
 
-    hoursValidator(body.hours);
-    endDateValidator(body.endDate);
+
+    if (!isValidEndDate(body.endDate)) throw new Error(`Invalid end date. Minimum days require ${MIN_DAYS}`);
+    if (!isValidHours(body.hours)) throw new Error(`Invalid amount of hours. Minimum is ${MIN_HOURS}`);
 
     const plan: Plan = body;
 

@@ -1,26 +1,89 @@
-"use client"; 
+"use client";
 
 import { useState } from 'react';
 
 export default function RegisterOrLogin() {
-  const [isRegister, setIsRegister] = useState(false); // Перемикач 
+  const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    nickname: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const validateForm = () => {
+    // Валідація тільки для реєстрації
+    if (isRegister) {
+      if (formData.password !== formData.confirmPassword) {
+        setError("Паролі не співпадають");
+        return false;
+      }
+
+      const nameRegex = /^[A-Za-z0-9]+$/;
+      if (!nameRegex.test(formData.nickname) || formData.nickname.length > 20) {
+        setError("Нікнейм має містити тільки A-Z, a-z, 0-9 (до 20 символів)");
+        return false;
+      }
+
+      const passwordRegex = /^[A-Za-z0-9]{8,20}$/;
+      if (!passwordRegex.test(formData.password)) {
+        setError("Пароль 8-20 символів (A-Z, a-z, 0-9)");
+        return false;
+      }
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Невірний формат пошти");
+      return false;
+    }
+
+    return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isRegister) {
-      console.log('Реєстрація:', formData);
-    } else {
-      console.log('Вхід:', formData);
+    setError(null);
+
+    if (!validateForm()) return;
+    
+    setIsLoading(true);
+
+    try {
+      if (isRegister) {
+        // Запит реєстрації
+        const response = await fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nickname: formData.nickname,
+            email: formData.email,
+            password: formData.password
+          }),
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || "Помилка реєстрації");
+        }
+
+        alert("Реєстрація успішна! Увійдіть");
+        setIsRegister(false);
+        setFormData({ nickname: '', email: '', password: '', confirmPassword: '' });
+
+      } else {
+        // Тут буде логіка входу (потрібно реалізувати окремий API)
+        console.log('Логін:', formData);
+        alert('Функція входу ще не реалізована');
+      }
+
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Помилка сервера");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -30,23 +93,31 @@ export default function RegisterOrLogin() {
         <h1 className="text-center mb-4 text-primary">
           {isRegister ? 'Реєстрація' : 'Вхід'}
         </h1>
+        
+        {error && (
+          <div className="alert alert-danger mb-3" role="alert">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="w-100">
           {isRegister && (
             <div className="mb-3">
-              <label htmlFor="name" className="form-label">
-                Ім'я/Нік
+              <label htmlFor="nickname" className="form-label">
+                Нікнейм
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
+                id="nickname"
+                name="nickname"
+                value={formData.nickname}
+                onChange={(e) => setFormData({...formData, nickname: e.target.value})}
                 className="form-control"
-                placeholder="Введіть ваше ім'я"
+                placeholder="Тільки латинські літери та цифри"
               />
             </div>
           )}
+          
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               Електронна пошта
@@ -56,11 +127,12 @@ export default function RegisterOrLogin() {
               id="email"
               name="email"
               value={formData.email}
-              onChange={handleChange}
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
               className="form-control"
-              placeholder="Введіть вашу пошту"
+              placeholder="example@mail.com"
             />
           </div>
+
           <div className="mb-3">
             <label htmlFor="password" className="form-label">
               Пароль
@@ -70,11 +142,12 @@ export default function RegisterOrLogin() {
               id="password"
               name="password"
               value={formData.password}
-              onChange={handleChange}
+              onChange={(e) => setFormData({...formData, password: e.target.value})}
               className="form-control"
-              placeholder="Введіть ваш пароль"
+              placeholder={isRegister ? "8-20 символів (A-Z, a-z, 0-9)" : "Введіть пароль"}
             />
           </div>
+
           {isRegister && (
             <div className="mb-3">
               <label htmlFor="confirmPassword" className="form-label">
@@ -85,22 +158,28 @@ export default function RegisterOrLogin() {
                 id="confirmPassword"
                 name="confirmPassword"
                 value={formData.confirmPassword}
-                onChange={handleChange}
+                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                 className="form-control"
-                placeholder="Повторіть ваш пароль"
+                placeholder="Повторіть пароль"
               />
             </div>
           )}
+
           <button
             type="submit"
             className="btn btn-primary w-100"
+            disabled={isLoading}
           >
-            {isRegister ? 'Зареєструватись' : 'Увійти'}
+            {isLoading ? 'Завантаження...' : (isRegister ? 'Зареєструватись' : 'Увійти')}
           </button>
         </form>
+
         <div className="mt-3 text-center">
           <button
-            onClick={() => setIsRegister(!isRegister)}
+            onClick={() => {
+              setIsRegister(!isRegister);
+              setError(null);
+            }}
             className="btn btn-link text-primary"
           >
             {isRegister
@@ -108,13 +187,6 @@ export default function RegisterOrLogin() {
               : 'Немає акаунту? Зареєструватись'}
           </button>
         </div>
-        {!isRegister && (
-          <div className="text-center mt-2">
-            <button className="btn btn-link text-primary">
-              Забув пароль?
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

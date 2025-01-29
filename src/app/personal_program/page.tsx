@@ -1,20 +1,61 @@
-"use client"; // Додаємо директиву для клієнтського компонента
-
-import {useState} from "react";
+"use client";
+import { useState } from "react";
 import "../styles/styles.css";
+import { useRouter } from "next/navigation";
+
 export default function PersonalPlanPage() {
-  const [showCheckbox, setShowCheckbox] = useState(true); // Галочка з'являється, якщо тест не пройдено.
-  const [hoursHumber, setHoursNumber] = useState("");
+  const router = useRouter();
+  const [showCheckbox, setShowCheckbox] = useState(true);
+  const [hoursNumber, setHoursNumber] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [error, setError] = useState<null | string>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateHours = (hours: number) => {
-    if (hours < 0 || hours > 168) return "Enter the correct number of hours";
+    if (isNaN(hours)) return "Введіть коректну кількість годин";
+    if (hours < 0 || hours > 168) return "Число має бути від 0 до 168";
     return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Валідація
+    const hoursError = validateHours(Number(hoursNumber));
+    if (hoursError) return setError(hoursError);
+    
+    if (!endDate) return setError("Оберіть дату завершення");
+    if (new Date(endDate) < new Date()) return setError("Дата має бути у майбутньому");
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/plans", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hours: Number(hoursNumber),
+          endDate: new Date(endDate).toISOString(),
+          userID: "temp-user-id" // TODO: Замінити на реальний ID з авторизації
+        })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Помилка при створенні плану");
+      }
+
+      router.push("/personal/dashboard");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Невідома помилка");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="d-flex flex-column justify-content-between min-vh-100">
-      {/* Хедер */}
       <header className="bg-white py-5 border-bottom">
         <div className="container px-5 text-center">
           <div className="row justify-content-center">
@@ -38,7 +79,6 @@ export default function PersonalPlanPage() {
                 </a>
               </div>
 
-              {/* Чекбокс для пропуску тесту */}
               {showCheckbox && (
                 <div className="d-flex align-items-center justify-content-center mt-3">
                   <input
@@ -56,89 +96,63 @@ export default function PersonalPlanPage() {
         </div>
       </header>
 
-      {/* Основна частина */}
       <main className="flex-grow-1 d-flex justify-content-center align-items-center">
         <div className="text-center">
-          <form className="d-flex flex-column align-items-center">
-            {/* Поле для кількості годин */}
+          <form onSubmit={handleSubmit} className="d-flex flex-column align-items-center">
             <div className="mb-4 text-center">
               <label
                 htmlFor="hours"
                 className="lead text-dark d-block mb-2"
-                style={{
-                  width: "300px",
-                  textAlign: "center",
-                }}
+                style={{ width: "300px", textAlign: "center" }}
               >
                 Скільки годин на тиждень ви маєте можливість займатись?
               </label>
               <input
                 id="hours"
                 type="number"
-                placeholder={"Введіть кількість годин"}
-                value={hoursHumber}
-                maxLength={3}
-                onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e" || e.key === "+") {
-                    e.preventDefault();
-                  }
-                }}
+                placeholder="Введіть кількість годин"
+                value={hoursNumber}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Only allow numbers up to 3 digits
                   if (value === "" || /^[0-9]{0,3}$/.test(value)) {
                     setHoursNumber(value);
-                    if (validateHours(Number(value))) {
-                      console.log("data", Number(value));
-                      setError(validateHours(Number(value)));
-                    } else {
-                      setError(null);
-                    }
+                    setError(null);
                   }
                 }}
                 className="form-control mx-auto"
-                style={{
-                  width: "300px",
-                  fontSize: "1rem",
-                  textAlign: "center",
-                }}
+                style={{ width: "300px", fontSize: "1rem", textAlign: "center" }}
+                min="0"
+                max="168"
               />
             </div>
-            {error && (
-              <div className="text-danger">
-                <p>{error}</p>
-              </div>
-            )}
 
-            {/* Поле для дати завершення */}
             <div className="mb-4 text-center">
               <label
                 htmlFor="endDate"
                 className="lead text-dark d-block mb-2"
-                style={{
-                  width: "300px",
-                  textAlign: "center",
-                }}
+                style={{ width: "300px", textAlign: "center" }}
               >
                 Виберіть дату завершення навчання
               </label>
               <input
                 id="endDate"
                 type="date"
-                placeholder="Оберіть дату"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
                 className="form-control mx-auto"
-                style={{
-                  width: "300px",
-                  fontSize: "1rem",
-                  textAlign: "center",
-                }}
+                style={{ width: "300px", fontSize: "1rem", textAlign: "center" }}
               />
             </div>
 
-            {/* Кнопка "Створити план" */}
+            {error && (
+              <div className="text-danger mb-3">
+                <p>{error}</p>
+              </div>
+            )}
+
             <button
-              disabled={!!error}
               type="submit"
+              disabled={isLoading}
               className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center"
               style={{
                 width: "300px",
@@ -146,7 +160,7 @@ export default function PersonalPlanPage() {
                 fontSize: "1.2rem",
               }}
             >
-              Створити план
+              {isLoading ? "Створення..." : "Створити план"}
             </button>
           </form>
         </div>

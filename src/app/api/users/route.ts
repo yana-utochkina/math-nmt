@@ -20,9 +20,9 @@ function isValidName(name: string): boolean {
 
 export async function POST(request: Request) {
   try {
-    const { email, password, repPassword, nickname } = await request.json();
+    const { email, password, nickname } = await request.json();
 
-    if (!email || !password || !repPassword || !nickname) {
+    if (!email || !password || !nickname) {
       return new NextResponse(
         JSON.stringify({ message: "Fill in all fields" }),
         { status: 400 });
@@ -46,11 +46,6 @@ export async function POST(request: Request) {
         { status: 400 });
     }
 
-    if (password != repPassword) {
-      return new NextResponse(
-        JSON.stringify({ message: "Check your password" }),
-        { status: 400 });
-    }
     //const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
@@ -156,5 +151,3 @@ export async function DELETE() {
 //     );
 //   }
 // };
-
-

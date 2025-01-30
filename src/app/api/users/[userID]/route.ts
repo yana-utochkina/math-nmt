@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@db";
-import { isValidNickname, isValidEmail, isValidPassword } from "@validator/user";
+import { prisma } from "@/lib/db";
+import { isValidNickname, isValidEmail, isValidPassword } from "@/lib/validator/user";
 import { User } from "@prisma/client";
 
 export async function GET(req: Request, context: { params: { userID: string } }) {

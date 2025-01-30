@@ -1,20 +1,20 @@
 // Read-запит на діставання фул інфи про тему (json{ title, theory, progress })
-import { NextResponse } from "next/server";
-import { prisma } from "@db";
+// import { NextResponse } from "next/server";
+// import { prisma } from "@/lib/db";
 
-export async function get(req) {
-  const { id } = req.params;
-  const topic = await prisma.topic.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      title: true,
-    },
-  });
+// export async function get(req) {
+//   const { id } = req.params;
+//   const topic = await prisma.topic.findUnique({
+//     where: {
+//       id,
+//     },
+//     select: {
+//       title: true,
+//     },
+//   });
 
-  return NextResponse.json(topic);
-}
+//   return NextResponse.json(topic);
+// }
 
 // const user_progress = await prisma.task.findMany({
 //   relationLoadStrategy: "join",

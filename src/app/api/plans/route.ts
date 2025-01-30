@@ -1,7 +1,7 @@
 import { Plan } from "@prisma/client";
-import { prisma } from "@db";
+import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server"
-import { isValidEndDate, isValidHours, MIN_DAYS, MIN_HOURS } from "@validator/plan"
+import { isValidEndDate, isValidHours, MIN_DAYS, MIN_HOURS } from "@/lib/validator/plan"
 
 export async function GET() {
     try {
@@ -32,9 +32,4 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: `Plan error: ${error.message}` }, { status: 503 });
     }
 
-    return NextResponse.json(
-      { error: "Помилка сервера: " + error.message },
-      { status: 500 }
-    );
-  }
 }

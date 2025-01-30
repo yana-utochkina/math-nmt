@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     if (!body.nickname) throw new Error("Require nickname");
     if (!body.email) throw new Error("Require email");
     if (!body.password) throw new Error("Require password");
-
+    
     if (!isValidNickname(body.nickname)) throw new Error("Nickname must include: A-Z,a-z,0-9 and must be up to 20 symbols");
     if (!isValidEmail(body.email)) throw new Error("Invalid email");
     if (!isValidPassword(body.password)) throw new Error("The password must include: A-Z,a-z,0-9 and must have a length 8-20 symbols");
@@ -43,4 +43,6 @@ export async function POST(request: Request) {
     }
     return NextResponse.json({ error: "Failed to add user" }, { status: 500 });
   }
+
 }
+

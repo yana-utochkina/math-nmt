@@ -13,7 +13,6 @@ export async function GET() {
     }
 };
 
-
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -32,4 +31,10 @@ export async function POST(request: Request) {
     catch (error) {
         return NextResponse.json({ error: `Plan error: ${error.message}` }, { status: 503 });
     }
-};
+
+    return NextResponse.json(
+      { error: "Помилка сервера: " + error.message },
+      { status: 500 }
+    );
+  }
+}

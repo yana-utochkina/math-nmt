@@ -6,6 +6,15 @@
       "dom.iterable",
       "esnext"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "@db": [
+        "src/lib/db"
+      ],
+      "@validator/*": [
+        "src/lib/validator/*"
+      ]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,

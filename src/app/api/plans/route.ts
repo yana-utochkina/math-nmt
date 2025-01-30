@@ -1,6 +1,7 @@
 import { Plan } from "@prisma/client";
-import { prisma } from "../../../lib/db";
+import { prisma } from "@db";
 import { NextResponse } from "next/server"
+import { isValidEndDate, isValidHours, MIN_DAYS, MIN_HOURS } from "@validator/plan"
 
 export async function GET() {
     try {
@@ -13,39 +14,22 @@ export async function GET() {
 };
 
 export async function POST(request: Request) {
-  try {
-    const { userID, hours, endDate } = await request.json();
+    try {
+        const body = await request.json();
 
-    // Валідація даних
-    if (!userID) return NextResponse.json(
-      { error: "Необхідна авторизація" }, 
-      { status: 401 }
-    );
+        if (!body.userID) throw new Error("Require userID");
 
-    if (!hours || !endDate) return NextResponse.json(
-      { error: "Заповніть всі поля" }, 
-      { status: 400 }
-    );
+        if (!isValidEndDate(body.endDate)) throw new Error(`Invalid end date. Minimum days require ${MIN_DAYS}`);
+        if (!isValidHours(body.hours)) throw new Error(`Invalid amount of hours. Minimum is ${MIN_HOURS}`);
 
-    const newPlan = await prisma.plan.create({
-      data: {
-        userID,
-        hours: Number(hours),
-        endDate: new Date(endDate),
-      },
-    });
+        const plan: Plan = body;
 
-    return NextResponse.json(newPlan, { status: 201 });
+        const newPlan = await prisma.plan.create({ data: plan });
 
-  } catch (error: any) {
-    console.error("Error creating plan:", error);
-    
-    // Обробка помилок Prisma
-    if (error.code === "P2002") {
-      return NextResponse.json(
-        { error: "План для цього користувача вже існує" },
-        { status: 409 }
-      );
+        return NextResponse.json(newPlan, { status: 200 });
+    }
+    catch (error) {
+        return NextResponse.json({ error: `Plan error: ${error.message}` }, { status: 503 });
     }
 
     return NextResponse.json(

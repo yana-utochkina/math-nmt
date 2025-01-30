@@ -3,7 +3,7 @@
 
 "use server";
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../../../lib/db";
+import { prisma } from "@db";
 
 export const GET = async (request: Request) => {
   try {

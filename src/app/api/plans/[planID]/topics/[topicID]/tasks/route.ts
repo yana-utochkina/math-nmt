@@ -1,111 +1,29 @@
-// Read-запит на діставання id та description завдань конкретної теми та прогрес кожного завдання
-//
+import { prisma } from "@/lib/db";
+import { NextResponse } from "next/server";
 
-// "use server";
-// import { NextResponse } from "next/server";
-// import { prisma } from "@/lib/db";
+export async function GET(request: Request, context: { params: { planID: string, topicID: string } }) {
+    const result = await prisma.task.findMany({
+        where: {
+            topicID: '721eea05-073b-45ea-8239-6459bddc6b0d',
+            PlanTask: {
+                some: {
+                    planID: '7e670d32-b02a-4144-a7db-32cd1ce0fda0'
+                }
+            }
+        },
+        include: {
+            PlanTask: {
+                where: {
+                    planID: '7e670d32-b02a-4144-a7db-32cd1ce0fda0'
+                }
+            },
+            UserTask: {
+                where: {
+                    userID: '4a57e5ff-28b2-4489-8a5b-49b3162ffb15'
+                }
+            }
+        }
+    });
 
-// export const GET = async (request: Request) => {
-//   try {
-//     const { id, description, progress, topicID } = await request.json();
-//     const tasks = await prisma.task.findMany({
-//       where: {
-//         topicID: topicID,
-//       },
-//       select: {
-//         id: true,
-//         description: true,
-//         progress: true,
-//       },
-//     });
-
-//     return NextResponse.json(tasks);
-//   }
-//   catch (error: any) {
-//     console.error("Error fetching tasks:", error);
-//     return NextResponse.json(
-//       { error: "An error occurred while fetching tasks" },
-//       { status: 500 }
-//     );
-//   }
-
-// };
-
-
-// export const POST = async (request: Request) => {
-//   try {
-//     const { id, description, progress, topicID } = await request.json();
-//     const task = await prisma.task.create({
-//       data: {
-//         id: id,
-//         description: description,
-//         solution: "solution",
-//         progress: progress,
-//         topicID: topicID,
-//         problem: "problem",
-//       },
-//     });
-
-//     return NextResponse.json(task);
-//   }
-//   catch (error: any) {
-//     console.error("Error creating task:", error);
-//     return NextResponse.json(
-//       { error: "An error occurred while creating task" },
-//       { status: 500 }
-//     );
-//   }
-// }
-// export async function get(req) {
-//   const { id: topicId } = req.params;
-//   const tasks = await prisma.task.findMany({
-//     where: {
-//       topicID: topicId,
-//     },
-//     select: {
-//       id: true,
-//       description: true,
-//       progress: true,
-//     },
-//   });
-
-//   return NextResponse.json(tasks);
-// }
-
-
-
-// GPT
-// export async function GET(req, { params }) {
-//   const { topicId } = params;
-
-//   try {
-//     // Validate input
-//     if (!topicId) {
-//       return NextResponse.json(
-//         { error: "Missing topicId parameter" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Fetch tasks for the specific topic
-//     const tasks = await prisma.task.findMany({
-//       where: { topicID: topicId }, // Ensure topicId is a number
-//       select: {
-//         id: true,
-//         description: true,
-//         progress: true,
-//       },
-//     });
-
-//     // Return tasks in the response
-//     return NextResponse.json(tasks);
-
-//   } catch (error) {
-//     // Handle errors and respond with a 500 status
-//     console.error("Error fetching tasks:", error);
-//     return NextResponse.json(
-//       { error: "An error occurred while fetching tasks" },
-//       { status: 500 }
-//     );
-//   }
-// }
+    return NextResponse.json(result);
+}

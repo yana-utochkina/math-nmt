@@ -1,7 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import "./styles/styles.css";
-import Head from "next/head";
 import Image from "next/image";
 
 export const metadata = {
@@ -12,7 +11,7 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="d-flex flex-column min-vh-100">
@@ -23,7 +22,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
             <a
               href="/"
               className="text-decoration-none text-primary fw-bold"
-              style={{fontSize: "1.5rem"}}
+              style={{ fontSize: "1.5rem" }}
             >
               <Image
                 src="/kitacademy-logo-edited.png"

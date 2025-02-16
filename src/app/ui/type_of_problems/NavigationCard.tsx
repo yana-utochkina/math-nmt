@@ -99,5 +99,4 @@ const NavigationSection = () => {
     </div>
   );
 };
-
 export default NavigationSection;

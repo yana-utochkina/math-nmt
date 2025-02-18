@@ -70,17 +70,23 @@ export default function TasksPage({ params: paramsPromise }) {
           <div className="row justify-content-center align-items-center">
             <div className="col-md-8 text-center">
               <h5>{currentTask.description}</h5>
-              <img 
-                src={`/${currentTask.problem}`} 
-                alt="Task" 
-                className="img-fluid task-image" 
-              />
+                <div className="d-flex justify-content-center">
+                  <img 
+                    src={`/${currentTask.problem}`} 
+                    alt="Task" 
+                    className="img-fluid task-image" 
+                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} 
+                 />
+                </div>
               {showSolution && (
-                <img 
-                  src={`/${currentTask.solution}`} 
-                  alt="Solution" 
-                  className="img-fluid task-image mt-2" 
-                />
+                <div className="d-flex justify-content-center">
+                  <img 
+                    src={`/${currentTask.solution}`} 
+                    alt="Solution" 
+                    className="img-fluid task-image mt-2"
+                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                  />
+                </div>
               )}
             </div>
           </div>

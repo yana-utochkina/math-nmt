@@ -1,8 +1,19 @@
-// Read-запит на діставання json {title, progress(групувати по темі в таблиці UserTopicTask)}
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
 
-import { prisma } from "../../../../../lib/db";
-import { NextResponse } from "next/server"
+export async function GET(request: Request, context: { params: { planID: string } }) {
+    try {
+        const { params } = await context;
+        const { planID } = await params;
 
+        const { userID } = await prisma.plan.findUniqueOrThrow({
+            where: {
+                id: planID
+            },
+            select: {
+                userID: true
+            }
+        });
 
 export const GET = async (request: Request, contex: any) => {
     try {
@@ -27,14 +38,22 @@ export const GET = async (request: Request, contex: any) => {
             }
         });
 
-        const groupedTopics = topics.reduce((acc: any, topic: any) => {
-            const { id, title, parentID } = topic.task.topic;
-            if (!acc[title]) {
-                acc[title] = { id, parentID, topics: [] };
-            }
-            acc[title].topics.push({ ...topic, task: { ...topic.task, topic: undefined } });
-            return acc;
-        }, {});
+
+//         const groupedTopics = topics.reduce((acc: any, topic: any) => {
+//             const { id, title, parentID } = topic.task.topic;
+//             if (!acc[title]) {
+//                 acc[title] = { id, parentID, topics: [] };
+//             }
+//             acc[title].topics.push({ ...topic, task: { ...topic.task, topic: undefined } });
+//             return acc;
+//         }, {});
+
+        return NextResponse.json(userID, { status: 200 });
+    }
+    catch (error) {
+        return NextResponse.json({ error: `Topics error: ${error.message}` }, { status: 500 });
+    }
+}
 
         return NextResponse.json(groupedTopics, { status: 200 });
     }

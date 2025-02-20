@@ -1,7 +1,3 @@
-// Read-запит на діставання фул інфи про тему (json{ title, theory, progress })
-import { NextResponse } from "next/server";
-import { prisma } from "../../../../../../lib/db";
-
 export const GET = async (request: Request, context: any) => {
   try {
     const { params } = context;

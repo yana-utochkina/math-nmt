@@ -1,6 +1,3 @@
-// Update-запит на зміну прогресу таски
-// Read-запит на діставання прогресу
-
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../../../../lib/db";
 

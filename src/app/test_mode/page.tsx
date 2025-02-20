@@ -1,43 +1,42 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Confetti from "react-confetti";
+import Image from "next/image";
 
 export default function TestModePage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+
   const useCells = searchParams.get("useCells") === "true";
   const correctAnswer = searchParams.get("correctAnswer") || "А";
 
   const [showSolution, setShowSolution] = useState(false);
   const [answer, setAnswer] = useState("");
-  const [error, setError] = useState("");
   const [hovered, setHovered] = useState(false);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
   const options = ["А", "Б", "В", "Г", "Д"];
 
-  const handleMouseEnter = () => {
-    const id = setTimeout(() => setHovered(true), 2000);
-    setTimeoutId(id);
-  };
-
-  const handleMouseLeave = () => {
-    if (timeoutId) clearTimeout(timeoutId);
-    setHovered(false);
-  };
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (hovered) {
+      timeoutId = setTimeout(() => setHovered(false), 2000);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [hovered]);
 
   const handleSubmit = () => {
     if (!submitted) {
       setSubmitted(true);
       if (answer === correctAnswer) {
         setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 3000); // Припиняє конфетті через 3 сек
+        setTimeout(() => setShowConfetti(false), 3000);
       }
     } else {
-      window.location.reload();
+      router.refresh();
     }
   };
 
@@ -48,20 +47,22 @@ export default function TestModePage() {
         <div className="container py-4">
           <div className="row justify-content-center align-items-center">
             <div className="col-md-8 text-center">
-              <img 
-                src="/images/test_mode_task.jpg" 
-                alt="Task" 
-                className={`img-fluid task-image ${hovered ? "hovered" : ""}`} 
-                onMouseEnter={handleMouseEnter} 
-                onMouseLeave={handleMouseLeave} 
+              <Image
+                src="/images/test_mode_task.jpg"
+                alt="Task"
+                width={600}
+                height={400}
+                className={`img-fluid task-image ${hovered ? "hovered" : ""}`}
+                onMouseEnter={() => setHovered(true)}
               />
               {showSolution && (
-                <img 
-                  src="/images/test_mode_solution.jpg" 
-                  alt="Solution" 
-                  className={`img-fluid task-image mt-2 ${hovered ? "hovered" : ""}`} 
-                  onMouseEnter={handleMouseEnter} 
-                  onMouseLeave={handleMouseLeave} 
+                <Image
+                  src="/images/test_mode_solution.jpg"
+                  alt="Solution"
+                  width={600}
+                  height={400}
+                  className={`img-fluid task-image mt-2 ${hovered ? "hovered" : ""}`}
+                  onMouseEnter={() => setHovered(true)}
                 />
               )}
             </div>
@@ -96,26 +97,19 @@ export default function TestModePage() {
 
           <div className="row justify-content-center mt-3 gap-2">
             <div className="col-auto">
-              <button 
-                className="btn btn-primary custom-button skip-button" 
-                onClick={() => window.location.reload()}
-              >
+              <button className="btn btn-primary custom-button" onClick={() => router.refresh()}>
                 Пропустити
               </button>
             </div>
             <div className="col-auto">
-              <button 
-                className="btn btn-primary custom-button"
-                onClick={handleSubmit} 
-                disabled={!answer && !submitted}
-              >
+              <button className="btn btn-primary custom-button" onClick={handleSubmit} disabled={!answer && !submitted}>
                 {submitted ? "Далі" : "Відповісти"}
               </button>
             </div>
             <div className="col-auto">
-              <button 
-                className="btn btn-primary custom-button" 
-                onClick={() => setShowSolution(!showSolution)} 
+              <button
+                className="btn btn-primary custom-button"
+                onClick={() => setShowSolution(!showSolution)}
                 disabled={!submitted}
               >
                 {showSolution ? "Сховати розв'язок" : "Розв'язок"}
@@ -157,9 +151,6 @@ export default function TestModePage() {
         }
         .custom-button:hover {
           background-color: #0056b3;
-        }
-        .skip-button:hover {
-          background-color: #0056b3 !important;
         }
         .task-image {
           transition: transform 1s ease-in-out;

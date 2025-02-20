@@ -50,7 +50,7 @@ export async function GET(request: Request, context: { params: { planID: string,
 export async function POST(request: Request, context: { params: { planID: string, topicID: string } }) {
     try {
         const { params } = await context;
-        const { planID, topicID } = await params;
+        const planID = await params.planID;
 
         const body = await request.json();
         const planTask: PlanTask = body;

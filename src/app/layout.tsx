@@ -3,6 +3,7 @@ import "./globals.css";
 import "./styles/styles.css";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 
 export const metadata = {
   title: "Kitacademy",
@@ -12,7 +13,7 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="d-flex flex-column min-vh-100">
@@ -20,28 +21,19 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         <header className="container d-flex justify-content-between align-items-center py-3 border-bottom">
           {/* Назва проекту */}
           <div>
-            <a
-              href="/"
-              className="text-decoration-none text-primary fw-bold"
-              style={{fontSize: "1.5rem"}}
-            >
-              <Image
-                src="/kitacademy-logo-edited.png"
-                alt="Kitacademy logo"
-                width={200}
-                height={50}
-              />
-            </a>
+            <Link href="/" className="text-decoration-none text-primary fw-bold" style={{ fontSize: "1.5rem" }}>
+              <Image src="/kitacademy-logo-edited.png" alt="Kitacademy logo" width={200} height={50} />
+            </Link>
           </div>
 
           {/* Посилання для реєстрації/входу */}
           <div>
-            <a className="text-primary me-3" href="/user_profile">
+            <Link className="text-primary me-3" href="/user_profile">
               Реєстрація/Увійти
-            </a>
-            <a className="text-primary" href="/profile">
+            </Link>
+            <Link className="text-primary" href="/profile">
               <i className="bi bi-person"></i>
-            </a>
+            </Link>
           </div>
         </header>
 

@@ -35,12 +35,14 @@ export default function EditProfile() {
               onChange={() => setChangeName(!changeName)}
               className="form-check-input"
             />
-            <label htmlFor="changeName" className="form-check-label fw-bold">Змінити ім'я</label>
+            <label htmlFor="changeName" className="form-check-label fw-bold">
+              {`Змінити ім'я`}
+            </label>
           </div>
           {changeName && (
             <>
               <div className="mb-3">
-                <label htmlFor="name" className="form-label">Нове ім'я</label>
+                <label htmlFor="name" className="form-label">{`Нове ім'я`}</label>
                 <input
                   type="text"
                   id="name"
@@ -73,12 +75,14 @@ export default function EditProfile() {
               onChange={() => setChangePassword(!changePassword)}
               className="form-check-input"
             />
-            <label htmlFor="changePassword" className="form-check-label fw-bold">Змінити пароль</label>
+            <label htmlFor="changePassword" className="form-check-label fw-bold">
+              {`Змінити пароль`}
+            </label>
           </div>
           {changePassword && (
             <>
               <div className="mb-3">
-                <label htmlFor="currentPassword" className="form-label">Старий пароль</label>
+                <label htmlFor="currentPassword" className="form-label">{`Старий пароль`}</label>
                 <input
                   type="password"
                   id="currentPassword"

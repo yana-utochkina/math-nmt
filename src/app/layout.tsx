@@ -36,7 +36,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
 
           {/* Посилання для реєстрації/входу */}
           <div>
-            <a className="text-primary me-3" href="/register">
+            <a className="text-primary me-3" href="/user_profile">
               Реєстрація/Увійти
             </a>
             <a className="text-primary" href="/profile">

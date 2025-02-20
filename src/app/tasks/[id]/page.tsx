@@ -29,6 +29,10 @@ export default function TasksPage({ params: paramsPromise }) {
         const res = await fetch(`http://localhost:3000/api/topics/${params.id}`, { cache: "no-store" });
         if (!res.ok) throw new Error("Не вдалося завантажити дані");
         const data = await res.json();
+
+        // сортування за description
+        const sortedTasks = data.Task.sort((a, b) => a.description.localeCompare(b.description));
+
         setTasks(data.Task);
       } catch (error) {
         console.error("Помилка завантаження завдань:", error);

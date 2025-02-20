@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
+import Link from "next/link";
 import { ClipboardList, CalendarDays, AlertTriangle } from "lucide-react";
 
-// Оголошуємо типи для пропсів NavigationCard
+// Типи пропсів для NavigationCard
 interface NavigationCardProps {
   icon: React.ElementType;
   title: string;
@@ -11,35 +14,31 @@ interface NavigationCardProps {
 
 const NavigationCard: React.FC<NavigationCardProps> = ({ icon: Icon, title, description, href }) => (
   <div className="group relative w-full md:w-96 h-64 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200">
-    <a href={href} className="absolute inset-0 no-underline">
+    <Link href={href} className="absolute inset-0 no-underline">
       <div className="p-6 h-full flex flex-col items-center justify-center text-center space-y-4">
         <div className="p-3 bg-blue-50 rounded-full group-hover:bg-blue-100 transition-colors duration-300">
           <Icon className="w-8 h-8 text-blue-600" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900 no-underline">{title}</h3>
-        <p className="text-gray-600 text-sm no-underline">{description}</p>
-        <span className="inline-flex items-center text-blue-600 font-semibold group-hover:translate-x-1 transition-transform duration-300 no-underline">
+        <h3 className="text-xl font-bold text-gray-900">{title}</h3>
+        <p className="text-gray-600 text-sm">{description}</p>
+        <span className="inline-flex items-center text-blue-600 font-semibold group-hover:translate-x-1 transition-transform duration-300">
           Розпочати
           <svg
             className="w-4 h-4 ml-2"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-label="Стрілка вправо"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </span>
       </div>
-    </a>
+    </Link>
   </div>
 );
 
-// Оголошуємо тип для опцій навігації
+// Опції навігації
 interface Option {
   icon: React.ElementType;
   title: string;
@@ -75,7 +74,7 @@ const ProblemsPage: React.FC = () => {
         <div className="container px-5 text-center">
           <div className="row justify-content-center">
             <div className="col-lg-8">
-              <h1 className="fw-bold display-4 text-primary mb-4">Розв'язування задач</h1>
+              <h1 className="fw-bold display-4 text-primary mb-4">Розв’язування задач</h1>
               <p className="lead text-dark">Оберіть один із розділів, щоб продовжити</p>
             </div>
           </div>

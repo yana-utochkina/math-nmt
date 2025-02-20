@@ -9,7 +9,14 @@ export async function GET(request: Request, context: { params: { topicID: string
         const topic = await prisma.topic.findUniqueOrThrow({
             where: {
                 id: topicID,
-            }
+            },
+            select: {
+                id: true,
+                title: true,
+                Task: true,
+                Plan: true,
+                Theory: true,
+              },
         });
         return NextResponse.json(topic, { status: 200 });
     }

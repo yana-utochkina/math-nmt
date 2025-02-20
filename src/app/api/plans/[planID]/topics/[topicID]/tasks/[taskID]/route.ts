@@ -1,66 +1,57 @@
-// Update-запит на зміну прогресу таски
-// Read-запит на діставання прогресу
+import { NextResponse } from "next/server";
+import { prisma } from "../../../../../../../../lib/db";
 
-// import { NextResponse } from "next/server";
-// import { prisma } from "@db";
+export const GET = async (request: Request, context: any) => {
+    try {
+        const { params } = context;
+        const taskID = params.taskID;
+        const task = await prisma.task.findUnique({
+            where: {
+                id: taskID,
+            },
+        });
+        return NextResponse.json(task, { status: 200 });
+    } catch (error: any) {
+        return NextResponse.json({ error: `TaskID error: ${error.message}` }, { status: 503 });
+    }
+}
 
-//idea gpt
+export const PATCH = async (request: Request, context: any) => {
+    try {
+        const { params } = context;
+        const taskID = params.taskID;
+        const { description, problem, solution, type, answer } = await request.json();
 
-// export const GET = async (
-//     req: Request,
-//     { params }: { params: { planID: string; topicID: string; taskID: string; userID: string } }
-//   ) => {
-//     const { planID, topicID, taskID, userID } = params;
-  
-//     try {
-//       // Перевірка параметрів
-//       if (!planID || !topicID || !taskID || !userID) {
-//         return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
-//       }
-  
-//       // Перевірка існування плану, теми та таски
-//       const plan = await prisma.plan.findUnique({
-//         where: { id: planID },
-//         include: {
-//           Topic: {
-//             where: { id: topicID },
-//             include: {
-//               Task: {
-//                 where: { id: taskID },
-//               },
-//             },
-//           },
-//         },
-//       });
-  
-//       if (!plan) {
-//         return NextResponse.json({ error: "Plan not found" }, { status: 404 });
-//       }
-  
-//     //   if (!plan.Topic.length || !plan.Topic[0].Task.length) {
-//     //     return NextResponse.json({ error: "Topic or Task not found" }, { status: 404 });
-//     //   }
-  
-//       // Отримання прогресу для користувача
-//       const userTask = await prisma.userTask.findUnique({
-//         where: { userID_taskID: { userID, taskID } },
-//         select: { passed_on: true },
-//       });
-  
-//       if (!userTask) {
-//         return NextResponse.json({ error: "Progress not found for this user and task" }, { status: 404 });
-//       }
-  
-//       // Відповідь з даними
-//       return NextResponse.json(
-//         {
-//           message: "Task progress fetched successfully",
-//           data: { passed_on: userTask.passed_on },
-//         },
-//         { status: 200 }
-//       );
-//     } catch (error: any) {
-//       console.error("Error fetching task progress:", error);
-//       return NextResponse.json({ error: "Failed to fetch task progress" }, { status: 500 });
-//     }
-//   };
+        const task = await prisma.task.update({
+            where: {
+                id: taskID,
+            },
+            data: {
+                description: description,
+                problem: problem,
+                solution: solution,
+                type: type,
+                answer: answer,
+            },
+        });
+        return NextResponse.json(task, { status: 200 });
+    } catch (error: any) {
+        return NextResponse.json({ error: `TaskID error: ${error.message}` }, { status: 503 });
+    }
+}
+
+export const DELETE = async (request: Request, context: any) => {
+    try {
+        const { params } = context;
+        const taskID = params.taskID;
+
+        await prisma.task.delete({
+            where: {
+                id: taskID,
+            },
+        });
+        return NextResponse.json({ message: `Task with id ${taskID} deleted` }, { status: 200 });
+    } catch (error: any) {
+        return NextResponse.json({ error: `TaskID error: ${error.message}` }, { status: 503 });
+    }
+}

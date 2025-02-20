@@ -91,4 +91,21 @@ export async function DELETE(request: Request, contex: { params: { planID: strin
   catch (error) {
     return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
   }
+};
+
+export const DELETE = async (request: Request, context: any) => {
+  try {
+    const { params } = context;
+    const id = params.planID;
+
+    await prisma.plan.delete({
+      where: {
+        id: id
+      }
+    });
+    return NextResponse.json({ message: `Plan with id ${id} deleted` }, { status: 200 });
+  }
+  catch (error: any) {
+    return NextResponse.json({ error: `PlanID error: ${error.message}` }, { status: 503 });
+  }
 }

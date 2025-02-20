@@ -1,80 +1,68 @@
 "use client";
 
-import { useState } from "react";
-import confetti from "canvas-confetti";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Confetti from "react-confetti";
+import Image from "next/image";
 
-interface TestModePageProps {
-  useCells?: boolean;
-  correctAnswer?: string;
-}
+export default function TestModePage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-const TestModePage: React.FC<TestModePageProps> = ({ useCells = true, correctAnswer = "А" }) => {
+  const useCells = searchParams.get("useCells") === "true";
+  const correctAnswer = searchParams.get("correctAnswer") || "А";
+
   const [showSolution, setShowSolution] = useState(false);
   const [answer, setAnswer] = useState("");
-  const [error, setError] = useState("");
   const [hovered, setHovered] = useState(false);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const options = ["А", "Б", "В", "Г", "Д"];
 
-  const validateInput = (value: string) => {
-    if (value.includes(",")) {
-      setError("Замість коми потрібна крапка.");
-    } else if (!/^[-0-9.]*$/.test(value)) {
-      setError("Допустимі лише числа і знак '-'!");
-    } else if (/^0[0-9]/.test(value)) {
-      setError("Число не може починатися з 0 без крапки після нього.");
-      return;
-    } else {
-      setError("");
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (hovered) {
+      timeoutId = setTimeout(() => setHovered(false), 2000);
     }
-    setAnswer(value);
-  };
-
-  const handleMouseEnter = () => {
-    const id = window.setTimeout(() => setHovered(true), 2000);
-    setTimeoutId(id as unknown as NodeJS.Timeout);
-  };
-
-  const handleMouseLeave = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    setHovered(false);
-  };
+    return () => clearTimeout(timeoutId);
+  }, [hovered]);
 
   const handleSubmit = () => {
     if (!submitted) {
       setSubmitted(true);
       if (answer === correctAnswer) {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
       }
     } else {
-      window.location.reload();
+      router.refresh();
     }
   };
 
   return (
     <div className="d-flex flex-column justify-content-between min-vh-100">
+      {showConfetti && <Confetti />}
       <main className="flex-grow-1">
         <div className="container py-4">
           <div className="row justify-content-center align-items-center">
             <div className="col-md-8 text-center">
-              <img
+              <Image
                 src="/images/test_mode_task.jpg"
                 alt="Task"
+                width={600}
+                height={400}
                 className={`img-fluid task-image ${hovered ? "hovered" : ""}`}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+                onMouseEnter={() => setHovered(true)}
               />
               {showSolution && (
-                <img
+                <Image
                   src="/images/test_mode_solution.jpg"
                   alt="Solution"
+                  width={600}
+                  height={400}
                   className={`img-fluid task-image mt-2 ${hovered ? "hovered" : ""}`}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
+                  onMouseEnter={() => setHovered(true)}
                 />
               )}
             </div>
@@ -109,7 +97,7 @@ const TestModePage: React.FC<TestModePageProps> = ({ useCells = true, correctAns
 
           <div className="row justify-content-center mt-3 gap-2">
             <div className="col-auto">
-              <button className="btn btn-primary custom-button skip-button" onClick={() => window.location.reload()}>
+              <button className="btn btn-primary custom-button" onClick={() => router.refresh()}>
                 Пропустити
               </button>
             </div>
@@ -130,6 +118,7 @@ const TestModePage: React.FC<TestModePageProps> = ({ useCells = true, correctAns
           </div>
         </div>
       </main>
+
       <style jsx>{`
         .answer-button {
           color: black;
@@ -163,9 +152,6 @@ const TestModePage: React.FC<TestModePageProps> = ({ useCells = true, correctAns
         .custom-button:hover {
           background-color: #0056b3;
         }
-        .skip-button:hover {
-          background-color: #0056b3 !important;
-        }
         .task-image {
           transition: transform 1s ease-in-out;
         }
@@ -175,6 +161,4 @@ const TestModePage: React.FC<TestModePageProps> = ({ useCells = true, correctAns
       `}</style>
     </div>
   );
-};
-
-export default TestModePage;
+}

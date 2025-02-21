@@ -1,7 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import "./styles/styles.css";
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 

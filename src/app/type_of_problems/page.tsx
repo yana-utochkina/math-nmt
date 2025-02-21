@@ -8,7 +8,7 @@ export default function ProblemsPage() {
           <div className="container px-5 text-center">
             <div className="row justify-content-center">
               <div className="col-lg-8">
-                <h1 className="fw-bold display-4 text-primary mb-2">Розв'язування задач</h1>
+                <h1 className="fw-bold display-4 text-primary mb-2">{`Розв'язування задач`}</h1>
                 <p className="lead text-dark mb-4">
                   Оберіть один із розділів, щоб продовжити
                 </p>

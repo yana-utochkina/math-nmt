@@ -35,12 +35,14 @@ export default function EditProfile() {
               onChange={() => setChangeName(!changeName)}
               className="form-check-input"
             />
-            <label htmlFor="changeName" className="form-check-label fw-bold">Змінити ім'я</label>
+            <label htmlFor="changeName" className="form-check-label fw-bold">
+              {`Змінити ім'я`}
+            </label>
           </div>
           {changeName && (
             <>
               <div className="mb-3">
-                <label htmlFor="name" className="form-label">Нове ім'я</label>
+                <label htmlFor="name" className="form-label">{`Нове ім'я`}</label>
                 <input
                   type="text"
                   id="name"
@@ -48,7 +50,7 @@ export default function EditProfile() {
                   value={formData.name}
                   onChange={handleChange}
                   className="form-control"
-                  placeholder="Введіть нове ім'я"
+                  placeholder={`Введіть нове ім'я`}
                 />
               </div>
               <div className="mb-3">
@@ -60,7 +62,7 @@ export default function EditProfile() {
                   value={formData.currentPassword}
                   onChange={handleChange}
                   className="form-control"
-                  placeholder="Введіть ваш пароль"
+                  placeholder={`Введіть ваш пароль`}
                 />
               </div>
             </>
@@ -73,12 +75,14 @@ export default function EditProfile() {
               onChange={() => setChangePassword(!changePassword)}
               className="form-check-input"
             />
-            <label htmlFor="changePassword" className="form-check-label fw-bold">Змінити пароль</label>
+            <label htmlFor="changePassword" className="form-check-label fw-bold">
+              {`Змінити пароль`}
+            </label>
           </div>
           {changePassword && (
             <>
               <div className="mb-3">
-                <label htmlFor="currentPassword" className="form-label">Старий пароль</label>
+                <label htmlFor="currentPassword" className="form-label">{`Старий пароль`}</label>
                 <input
                   type="password"
                   id="currentPassword"
@@ -86,7 +90,7 @@ export default function EditProfile() {
                   value={formData.currentPassword}
                   onChange={handleChange}
                   className="form-control"
-                  placeholder="Введіть ваш старий пароль"
+                  placeholder={`Введіть ваш старий пароль`}
                 />
               </div>
               <div className="mb-3">
@@ -98,7 +102,7 @@ export default function EditProfile() {
                   value={formData.newPassword}
                   onChange={handleChange}
                   className="form-control"
-                  placeholder="Введіть новий пароль"
+                  placeholder={`Введіть новий пароль`}
                 />
               </div>
               <div className="mb-3">
@@ -110,7 +114,7 @@ export default function EditProfile() {
                   value={formData.confirmNewPassword}
                   onChange={handleChange}
                   className="form-control"
-                  placeholder="Повторіть новий пароль"
+                  placeholder={`Повторіть новий пароль`}
                 />
               </div>
             </>

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 
 export default function PersonalPlanPage() {
   const router = useRouter();
-  const [showCheckbox, setShowCheckbox] = useState(true);
   const [hoursNumber, setHoursNumber] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState<null | string>(null);

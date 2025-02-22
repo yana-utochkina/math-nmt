@@ -8,12 +8,12 @@ interface Subtopic {
   progress: number;
   subtopics?: Subtopic[];
 }
-
+/*
 interface Topic {
   name: string;
   progress: number;
   subtopics: Subtopic[];
-}
+}*/
 
 const topics = [
   {

@@ -61,7 +61,7 @@ export default function TheoryPage({ params: paramsPromise }: { params: Promise<
 
       <div className="flex justify-center mt-5">
         <a
-          href={`/tasks/${theory.id}`}
+          href={`/test_mode/${theory.id}`}
           className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center"
           style={{ height: "100px", width: "300px" }}
         >

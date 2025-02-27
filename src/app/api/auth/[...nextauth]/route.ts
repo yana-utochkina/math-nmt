@@ -27,6 +27,24 @@ export const authOptions = {
                 if (email === "test@example.com" && password === "password123") {
                     return { id: "1", name: "Test User", email };
                 }
+                // if (!credentials?.email || !credentials?.password) {
+                //     throw new Error("Email and password are required");
+                // }
+                //
+                // const user = await prisma.user.findUnique({
+                //     where: { email: credentials.email },
+                // });
+                //
+                // if (!user || !user.password) {
+                //     throw new Error("User not found");
+                // }
+                //
+                // const isValid = await bcrypt.compare(credentials.password, user.password);
+                // if (!isValid) {
+                //     throw new Error("Incorrect password");
+                // }
+                //
+                // return { id: user.id, email: user.email };
 
                 throw new Error("Invalid email or password");
             },

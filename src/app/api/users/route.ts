@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { User } from "@prisma/client";
 //import bcrypt from "bcrypt";
 
+
 export async function GET() {
   try {
     const users = await prisma.user.findMany();

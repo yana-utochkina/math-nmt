@@ -2,11 +2,19 @@
 
 import { signIn } from "next-auth/react";
 
-export default function LoginPage() {
+const SignIn = () => {
     return (
         <div>
-            <h1>Login</h1>
-            <button onClick={() => signIn("google")}>Sign in with Google</button>
+            <h1>Sign In</h1>
+            {/* Default NextAuth sign-in button */}
+            <button
+                onClick={() => signIn("google")}
+                className="btn btn-google" // Optional: Add styling classes like bootstrap's 'btn-google' if you want
+            >
+                Sign in with Google
+            </button>
         </div>
     );
-}
+};
+
+export default SignIn;

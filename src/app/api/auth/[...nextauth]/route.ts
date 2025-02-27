@@ -4,7 +4,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 const handler = NextAuth({
-    adapter: PrismaAdapter(prisma),
+    // adapter: PrismaAdapter(prisma),
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -13,12 +13,25 @@ const handler = NextAuth({
     ],
     secret: process.env.NEXTAUTH_SECRET,
 
-    // callbacks: {
-    //     async session({ session, user }) {
-    //         session.user.id = user.id; // Додаємо ID користувача до сесії
-    //         return session;
-    //     },
-    // }
+    pages: {
+        signIn: '/login', // This is your custom login page (optional)
+        error: '/auth/error',   // Optional: an error page when authentication fails
+    },
+
+    callbacks: {
+        async redirect({ url, baseUrl }) {
+            // You can redirect to a specific page after successful login
+            if (url === '/login') {
+                return baseUrl;  // Redirect to home page or the desired route
+            }
+            return url;
+        },
+
+        // async session({ session, user }) {
+        //     session.user.id = user.id; // Додаємо ID користувача до сесії
+        //     return session;
+        // },
+    }
 });
 
 export { handler as GET, handler as POST };

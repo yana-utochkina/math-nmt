@@ -1,21 +1,40 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/db";
+// adapter: PrismaAdapter(prisma),
+
 import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
-const handler = NextAuth({
-    // adapter: PrismaAdapter(prisma),
+
+export const authOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
+
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "email", placeholder: "example@example.com" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                const { email, password } = credentials ?? {};
+
+                // Replace this with your actual user validation logic
+                if (email === "test@example.com" && password === "password123") {
+                    return { id: "1", name: "Test User", email };
+                }
+
+                throw new Error("Invalid email or password");
+            },
+        }),
     ],
-    secret: process.env.NEXTAUTH_SECRET,
 
     pages: {
-        signIn: '/login', // This is your custom login page (optional)
-        error: '/auth/error',   // Optional: an error page when authentication fails
+        signIn: "/register", // Redirect to your login page
     },
 
     callbacks: {
@@ -27,11 +46,14 @@ const handler = NextAuth({
             return url;
         },
 
-        // async session({ session, user }) {
-        //     session.user.id = user.id; // Додаємо ID користувача до сесії
-        //     return session;
-        // },
-    }
-});
+        async session({ session, token }) {
+            session.user.id = token.sub;
+            return session;
+        },
+    },
 
+    secret: process.env.NEXTAUTH_SECRET,
+};
+
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

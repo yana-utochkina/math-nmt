@@ -79,8 +79,23 @@ export default function RegisterOrLogin() {
 
       } else {
         // Тут буде логіка входу (потрібно реалізувати окремий API)
+        const result = await signIn("credentials", {
+          redirect: false, // Prevent NextAuth from redirecting automatically
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (result?.error) {
+          setError("Невірний email або пароль"); // Show an error message
+        } else {
+          window.location.href = "/user_profile"; // Redirect to a protected page
+        }
+
+
         console.log('Логін:', formData);
         alert('Функція входу ще не реалізована');
+
+        return;
       }
 
     } catch (error) {

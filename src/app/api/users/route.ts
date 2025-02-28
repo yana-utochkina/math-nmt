@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { isValidNickname, isValidEmail, isValidPassword } from "@/lib/validator/user";
 import { prisma } from "@/lib/db";
 import { User } from "@prisma/client";
-//import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 
 
 export async function GET() {
@@ -27,7 +27,8 @@ export async function POST(request: Request) {
     if (!isValidEmail(body.email)) throw new Error("Invalid email");
     if (!isValidPassword(body.password)) throw new Error("The password must include: A-Z,a-z,0-9 and must have a length 8-20 symbols");
 
-    //const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(body.password, 10);
+    // body.password = hashedPassword;
 
     const user: User = body;
 

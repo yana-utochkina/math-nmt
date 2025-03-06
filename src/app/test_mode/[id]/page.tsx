@@ -43,7 +43,7 @@ export default function TestModePage() {
       setLoading(false);
       return;
     }
-
+    
     async function fetchTasks() {
       try {
         const res = await fetch(`http://localhost:3000/api/topics/${topicId}`, { cache: "no-store" });
@@ -51,36 +51,29 @@ export default function TestModePage() {
         
         const data = await res.json();
         if (!data.Task) throw new Error("Немає завдань");
-
+        
         // Отримуємо title теми
         setTitle(data.title);
-
-        // Сортування за типом відповіді (всього 3 типи)
+        
+        // Сортування
         const sortedTasks = [...data.Task].sort((a: Task, b: Task) => {
-          const isSingleLetter = (answer: string) => /^[A-Za-zА-Яа-яЄєІіЇїҐґ]$/.test(answer);
-          const isObjectOfLetters = (answer: string) => {
-            try {
-              const parsed: { [key: string]: string } = JSON.parse(answer);
-              return Object.values(parsed).every(value => /^[A-Za-zА-Яа-яЄєІіЇїҐґ]$/.test(value));
-            } catch {
-              return false;
+          // Визначаємо пріоритет типів
+          const getTypePriority = (type: string, answer: string) => {
+            if (type === "ONE") {
+              return /^[A-Za-zА-Яа-яЄєІіЇїҐґ]$/.test(answer) ? 1 : 3;
+            } else if (type === "MATCH") {
+              return 2;
+            } else {
+              return 4;
             }
           };
-          const isNumber = (answer: string) => /^-?\d+(\.\d+)?$/.test(answer);
           
-          // Спочатку 1 літера, потім кілька, в кінці число
-          if (isSingleLetter(a.answer) && !isSingleLetter(b.answer)) return -1;
-          if (!isSingleLetter(a.answer) && isSingleLetter(b.answer)) return 1;
-      
-          if (isObjectOfLetters(a.answer) && !isObjectOfLetters(b.answer)) return -1;
-          if (!isObjectOfLetters(a.answer) && isObjectOfLetters(b.answer)) return 1;
-      
-          if (isNumber(a.answer) && !isNumber(b.answer)) return 1;
-          if (!isNumber(a.answer) && isNumber(b.answer)) return -1;
-      
-          return 0;
+          const priorityA = getTypePriority(a.type, a.answer);
+          const priorityB = getTypePriority(b.type, b.answer);
+          
+          return priorityA - priorityB;
         });
-
+        
         setTasks(sortedTasks);
       } catch (error: any) {
         setError(error.message);
@@ -88,6 +81,7 @@ export default function TestModePage() {
         setLoading(false);
       }
     }
+    
     fetchTasks();
   }, [topicId]);
 
@@ -129,7 +123,7 @@ export default function TestModePage() {
   useEffect(() => {
     if (!currentTask) return;
     
-    const answerType = getAnswerType(currentTask.answer);
+    const answerType = getAnswerType(currentTask);
     
     if (answerType === 'multipleLetters') {
       try {
@@ -158,7 +152,7 @@ export default function TestModePage() {
   const handleSubmit = () => {
     if (!submitted && currentTask) {
       const currentAnswer = currentTask.answer;
-      const answerType = getAnswerType(currentAnswer);
+      const answerType = getAnswerType(currentTask);
       
       let calculatedIsCorrect = false;
       
@@ -197,7 +191,7 @@ export default function TestModePage() {
   if (error) return <p>Помилка: {error}</p>;
   if (!tasks.length) return <p>Завдання не знайдені</p>;
 
-  const answerType = getAnswerType(currentTask.answer);
+  const answerType = getAnswerType(currentTask);
   const canSubmit = !!answer && 
     (typeof answer !== 'object' || Object.values(answer).some(v => !!v));
 

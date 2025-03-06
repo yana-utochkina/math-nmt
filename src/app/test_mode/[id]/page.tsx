@@ -32,7 +32,6 @@ export default function TestModePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [hovered, setHovered] = useState(false);
   
   const options = ["А", "Б", "В", "Г", "Д"];
 

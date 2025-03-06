@@ -1,16 +1,15 @@
 // доп функції
-import { MultipleLettersAnswer, AnswerType } from './types';
+import { Task, MultipleLettersAnswer, AnswerType } from './types';
 
 // Визначення типу відповіді
-export function getAnswerType(answer: string): AnswerType {
-  if (/^[А-ЯЄІЇҐа-яєіїґ]$/.test(answer)) return 'singleLetter';
-  try {
-    const parsed = JSON.parse(answer);
-    if (typeof parsed === 'object' && parsed !== null && 
-        Object.values(parsed).every((v: any) => /^[А-ЯЄІЇҐа-яєіїґ]$/.test(v))) {
-      return 'multipleLetters';
-    }
-  } catch (e) {}
+export function getAnswerType(task: Task): AnswerType {
+  if (task.type === "ONE") {
+    return /^[А-ЯЄІЇҐа-яєіїґ]$/.test(task.answer) ? 'singleLetter' : 'number';
+  } else if (task.type === "MATCH") {
+    return 'multipleLetters';
+  }
+  
+  // Якщо тип не розпізнано
   return 'number';
 }
 

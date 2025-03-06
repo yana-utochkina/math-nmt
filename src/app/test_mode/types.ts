@@ -2,8 +2,9 @@ export interface Task {
     id: string;
     answer: string;
     problem: string;
-    solution?: string;
+    solution: string;
     title?: string;
+    type: string;
   }
   
   export interface MultipleLettersAnswer {

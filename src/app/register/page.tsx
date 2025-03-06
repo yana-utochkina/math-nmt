@@ -91,7 +91,6 @@ export default function RegisterOrLogin() {
           window.location.href = "/user_profile"; // Redirect to a protected page
         }
 
-
         console.log('Логін:', formData);
         alert('Функція входу ще не реалізована');
 

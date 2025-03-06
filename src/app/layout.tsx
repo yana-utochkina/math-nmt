@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="d-flex flex-column min-vh-100">
-        <Providers>
+        {/*<Providers>*/}
           {/* Верхній блок із назвою і реєстрацією */}
           <header className="container d-flex justify-content-between align-items-center py-3 border-bottom">
             {/* Назва проекту */}
@@ -55,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </p>
             </div>
           </footer>
-        </Providers>
+        {/*</Providers>*/}
       </body>
     </html>
   );

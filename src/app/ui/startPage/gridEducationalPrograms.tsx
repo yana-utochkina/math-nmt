@@ -127,11 +127,11 @@ export default function EducationalPrograms() {
     transition-transform duration-300 ease-in-out transform hover:-translate-y-2 hover:scale-105`}
             >
               {renderCardContent(program)}
-              {program.badge && (
+              {/* {program.badge && (
                 <span className="position-absolute top-0 end-0 badge bg-primary m-2 z-1">
                   {program.badge}
                 </span>
-              )}
+              )} */}
             </div>
           </div>
         ))}

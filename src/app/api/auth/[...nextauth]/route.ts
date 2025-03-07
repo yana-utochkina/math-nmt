@@ -24,51 +24,55 @@ export const authOptions = {
                 password: { label: "Password", type: "password" },
             },
 
-
             async authorize(credentials) {
-                console.log("Received credentials:", credentials); // Debugging log
+
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error("Email and password are required");
+                }
 
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },
                 });
 
-                if (!user) {
+                if (!user || !user.password) {
                     throw new Error("User not found");
                 }
 
-                if (credentials.email === "lol@gmail.com" && credentials.password === "lol12345") {
-                    return { id: "1pf", name: "Test User", email: "lol@gmail.com" };
+                // const isValid = await bcrypt.compare(credentials.password, user.password);
+                const isValid = (credentials.password == user.password);
+                if (!isValid) {
+                    throw new Error("Incorrect password");
                 }
 
-                console.log("User authenticated successfully:", user.id);
                 return { id: user.id, email: user.email };
             },
-            // async authorize(credentials) {
-            //
-            //     if (!credentials?.email || !credentials?.password) {
-            //         throw new Error("Email and password are required");
-            //     }
-            //
-            //     const user = await prisma.user.findUnique({
-            //         where: { email: credentials.email },
-            //     });
-            //
-            //     if (!user || !user.password) {
-            //         throw new Error("User not found");
-            //     }
-            //
-            //     // const isValid = await bcrypt.compare(credentials.password, user.password);
-            //     const isValid = (credentials.password == user.password);
-            //     if (!isValid) {
-            //         throw new Error("Incorrect password");
-            //     }
-            //
-            //     return { id: user.id, email: user.email };
-            // },
 
         }),
     ],
-
+    session: {
+        strategy: "jwt" as const, // Use JWT for session management
+    },
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.email = user.email;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            session.user.id = token.id;
+            session.user.email = token.email;
+            return session;
+        },
+        async redirect({ url, baseUrl }) {
+            // You can redirect to a specific page after successful login
+            if (url === '/login') {
+                return baseUrl;  // Redirect to home page or the desired route
+            }
+            return url;
+        },
+    },
     pages: {
         signIn: "/register", // Redirect to your login page
     },
@@ -80,14 +84,6 @@ export const authOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
-
-
-// callbacks: {
-//     async session({ session, token }) {
-//         session.user.id = token.id;
-//         return session;
-//     },
-// },
 
 // async redirect({ url, baseUrl }) {
 //     // You can redirect to a specific page after successful login

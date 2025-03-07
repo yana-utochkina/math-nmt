@@ -1,9 +1,17 @@
 "use client";
 
 import { useState } from 'react';
-import { signIn } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
+export function SomeComponent() {
+  const { data: session } = useSession();
 
+  if (!session) {
+    return <div>Please log in</div>;
+  }
+
+  return <div>Welcome, {session.user?.name}!</div>;
+}
 
 export default function RegisterOrLogin() {
   const [isRegister, setIsRegister] = useState(false);
@@ -92,7 +100,6 @@ export default function RegisterOrLogin() {
         }
 
         console.log('Логін:', formData);
-        alert('Функція входу ще не реалізована');
 
         return;
       }
@@ -204,15 +211,25 @@ export default function RegisterOrLogin() {
                 : 'Немає акаунту? Зареєструватись'}
           </button>
         </div>
+        {/*<div className="mt-4 text-center">*/}
+        {/*  <h1>Google Sign In</h1>*/}
+        {/*  /!* Default NextAuth sign-in button *!/*/}
+        {/*  <button*/}
+        {/*      onClick={() => signIn("google")}*/}
+        {/*      className="btn btn-primary w-100"*/}
+        {/*      // className="btn btn-google" // Optional: Add styling classes like bootstrap's 'btn-google' if you want*/}
+        {/*  >*/}
+        {/*    Sign in with Google*/}
+        {/*  </button>*/}
+        {/*</div>*/}
         <div className="mt-4 text-center">
-          <h1>Google Sign In</h1>
-          {/* Default NextAuth sign-in button */}
+          <h1>Sign Out</h1>
+          {/* Default NextAuth sign-Out button */}
           <button
-              onClick={() => signIn("google")}
+              onClick={() => signOut()}
               className="btn btn-primary w-100"
-              // className="btn btn-google" // Optional: Add styling classes like bootstrap's 'btn-google' if you want
           >
-            Sign in with Google
+            Sign Out
           </button>
         </div>
       </div>

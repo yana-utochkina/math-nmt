@@ -3,8 +3,11 @@ import "./globals.css";
 import "./styles/styles.css";
 import Image from "next/image";
 import Link from "next/link";
+
 //auth
-import Providers from "./providers"; // <--- Import the Providers
+import Providers from "./providers";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/app/api/auth/[...nextauth]/route"; // <--- Import the Providers
 
 export const metadata = {
   title: "Kitacademy",
@@ -14,11 +17,13 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session  = await getServerSession(authOptions); // Get session data
+
   return (
     <html lang="en">
       <body className="d-flex flex-column min-vh-100">
-        {/*<Providers>*/}
+        <Providers>
           {/* Верхній блок із назвою і реєстрацією */}
           <header className="container d-flex justify-content-between align-items-center py-3 border-bottom">
             {/* Назва проекту */}
@@ -28,11 +33,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Link>
             </div>
 
-            {/* Посилання для реєстрації/входу */}
+            {/* Посилання для реєстрації/входу or logout button */}
             <div>
-              <Link className="text-primary me-3" href="/user_profile">
-                Реєстрація/Увійти
-              </Link>
+              {!session ? (
+                  // If no session (user not logged in)
+                  <Link className="text-primary me-3" href="/register">
+                    Реєстрація/Увійти
+                  </Link>
+              ) : (
+                  // If session exists (user logged in), show logout button and profile link
+                  <Link className="text-primary me-3" href="/user_profile">
+                    Профіль
+                  </Link>
+              )}
               <Link className="text-primary" href="/profile">
                 <i className="bi bi-person"></i>
               </Link>
@@ -55,7 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </p>
             </div>
           </footer>
-        {/*</Providers>*/}
+        </Providers>
       </body>
     </html>
   );

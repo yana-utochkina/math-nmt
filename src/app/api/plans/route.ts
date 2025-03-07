@@ -1,68 +1,35 @@
-// Create-запит на створення плану (в параметрах hours : int, endDate : DateType????)
+import { Plan } from "@prisma/client";
+import { prisma } from "@/lib/db";
+import { NextResponse } from "next/server"
+import { isValidEndDate, isValidHours, MIN_DAYS, MIN_HOURS } from "@/lib/validator/plan"
 
-import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/db";
-
-export async function post(request: Request) {
+export async function GET() {
     try {
-        const { hours, endDate } = await request.json();
-
-        if (typeof hours !== 'number' || !(endDate instanceof Date)) {
-            return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
-        }
-
-        const newPlan = await prisma.plan.create({
-            data: {
-                hours: "",
-                endDate: "",
-            },
-        });
-
-        return NextResponse.json(newPlan, { status: 201 });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to create plan' }, { status: 500 });
+        const plans = await prisma.plan.findMany();
+        return NextResponse.json(plans, { status: 200 });
     }
+    catch (error) {
+        return NextResponse.json({ error: `Prisma error: ${error.message}` }, { status: 503 });
+    }
+};
+
+export async function POST(request: Request) {
+    try {
+        const body = await request.json();
+
+        if (!body.userID) throw new Error("Require userID");
+
+        if (!isValidEndDate(body.endDate)) throw new Error(`Invalid end date. Minimum days require ${MIN_DAYS}`);
+        if (!isValidHours(body.hours)) throw new Error(`Invalid amount of hours. Minimum is ${MIN_HOURS}`);
+
+        const plan: Plan = body;
+
+        const newPlan = await prisma.plan.create({ data: plan });
+
+        return NextResponse.json(newPlan, { status: 200 });
+    }
+    catch (error) {
+        return NextResponse.json({ error: `Plan error: ${error.message}` }, { status: 503 });
+    }
+
 }
-
-
-
-//GPT
-// export async function POST(req) {
-//   try {
-//     // Parse request body
-//     const body = await req.json();
-//     const { hours, endDate } = body;
-
-// Validate input
-//     if (!hours || typeof hours !== "number" || hours <= 0) {
-//       return NextResponse.json(
-//         { error: "Invalid or missing 'hours' parameter" },
-//         { status: 400 }
-//       );
-//     }
-
-//     if (!endDate || isNaN(Date.parse(endDate))) {
-//       return NextResponse.json(
-//         { error: "Invalid or missing 'endDate' parameter" },
-//         { status: 400 }
-//       );
-//     }
-
-// Create a new plan
-//     const newPlan = await prisma.plan.create({
-//       data: {
-//         hours,
-//         endDate: new Date(endDate), // Ensure endDate is a valid Date object
-//       },
-//     });
-
-// Return the created plan
-//     return NextResponse.json(newPlan, { status: 201 });
-//   } catch (error) {
-//     console.error("Error creating plan:", error);
-//     return NextResponse.json(
-//       { error: "An error occurred while creating the plan" },
-//       { status: 500 }
-//     );
-//   }
-// }

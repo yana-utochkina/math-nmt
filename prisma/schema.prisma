@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -8,34 +9,29 @@ datasource db {
 }
 
 model User {
-  id        String @id @default(uuid()) @db.Uuid
+  id        String  @id @default(uuid()) @db.Uuid
   firstName String?
   nickname  String
-  email     String  @unique
+  email     String     @unique
   password  String
 
   UserTask UserTask[]
   Plan     Plan[]
-  PlanTask PlanTask[]
 }
 
 model Topic {
-  id       String @id @default(uuid()) @db.Uuid
-  parentID String @default("96a2384c-2c11-45b6-af7d-ca04cdffea84") @db.Uuid
+  id       String  @id @default(uuid()) @db.Uuid
+  parentID String  @default(dbgenerated("'96a2384c-2c11-45b6-af7d-ca04cdffea84'::uuid")) @db.Uuid
   title    String
-
-  Task   Task[]
-  Plan   Plan[]
-  Theory Theory[]
+  Plan     Plan[]
+  Task     Task[]
+  Theory   Theory?
 }
 
 model Theory {
-  topicID String @db.Uuid
-  content String @db.Text
-
-  topic Topic @relation(fields: [topicID], references: [id])
-
-  @@id([topicID])
+  topicID String @id @db.Uuid
+  content String
+  topic   Topic  @relation(fields: [topicID], references: [id])
 }
 
 model Task {
@@ -46,52 +42,45 @@ model Task {
   solution    String
   type        AnswerType
   answer      String
-
-  topic Topic @relation(fields: [topicID], references: [id])
-
-  UserTask UserTask[] @relation(fields: [], references: [])
-  PlanTask PlanTask[]
-}
-
-enum AnswerType {
-  ONE
-  MATCH
-  TYPE
+  PlanTask    PlanTask[]
+  topic       Topic      @relation(fields: [topicID], references: [id])
+  UserTask    UserTask[]
 }
 
 model UserTask {
   userID    String    @db.Uuid
   taskID    String    @db.Uuid
   passed_on DateTime?
-
-  user User @relation(fields: [userID], references: [id])
-  task Task @relation(fields: [taskID], references: [id])
+  task      Task      @relation(fields: [taskID], references: [id])
+  user      User      @relation(fields: [userID], references: [id])
 
   @@id([userID, taskID])
 }
 
 model Plan {
-  id        String    @id @default(uuid()) @db.Uuid
-  userID    String    @db.Uuid
+  id        String     @id @default(uuid()) @db.Uuid
+  userID    String     @db.Uuid
   hours     Int?
-  startDate DateTime  @default(now())
+  startDate DateTime   @default(now())
   endDate   DateTime?
-
-  User User @relation(fields: [userID], references: [id])
-
-  Topic    Topic?     @relation(fields: [topicId], references: [id])
-  topicId  String?    @db.Uuid
-  PlanTask PlanTask[]
+  topicId   String?    @db.Uuid
+  Topic     Topic?     @relation(fields: [topicId], references: [id])
+  User      User       @relation(fields: [userID], references: [id])
+  PlanTask  PlanTask[]
 }
 
 model PlanTask {
   planID String @db.Uuid
   taskID String @db.Uuid
 
-  plan   Plan    @relation(fields: [planID], references: [id])
-  task   Task    @relation(fields: [taskID], references: [id])
-  User   User?   @relation(fields: [userId], references: [id])
-  userId String? @db.Uuid
+  plan Plan @relation(fields: [planID], references: [id])
+  task Task @relation(fields: [taskID], references: [id])
 
   @@id([planID, taskID])
+}
+
+enum AnswerType {
+  ONE
+  MATCH
+  TYPE
 }

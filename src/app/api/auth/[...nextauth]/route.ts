@@ -65,13 +65,13 @@ export const authOptions = {
             session.user.email = token.email;
             return session;
         },
-        async redirect({ url, baseUrl }) {
-            // You can redirect to a specific page after successful login
-            if (url === '/login') {
-                return baseUrl;  // Redirect to home page or the desired route
-            }
-            return url;
-        },
+        // async redirect({ url, baseUrl }) {
+        //     // You can redirect to a specific page after successful login
+        //     if (url === '/register') {
+        //         return "/edit_profile";  // Redirect to home page or the desired route
+        //     }
+        //     return url;
+        // },
     },
     pages: {
         signIn: "/register", // Redirect to your login page

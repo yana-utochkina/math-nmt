@@ -3,6 +3,9 @@
 import React, { useState } from "react";
 import { User, AlertTriangle, BookOpen, ChevronRight, ChevronDown } from "lucide-react";
 
+import useAuthRedirect from "@/lib/authRedirect/useAuthRedirect";
+
+
 interface Subtopic {
   name: string;
   progress: number;
@@ -121,6 +124,10 @@ const NavigationCard: React.FC<NavigationCardProps> = ({ icon: Icon, title, desc
 
 const ProfilePage: React.FC = () => {
   const [expandedTopics, setExpandedTopics] = useState<{ [key: string]: boolean }>({});
+
+  // redirect if not logged in
+  useAuthRedirect();
+
 
   const toggleExpand = (topicName: string) => {
     setExpandedTopics((prev) => ({ ...prev, [topicName]: !prev[topicName] }));

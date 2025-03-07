@@ -3,16 +3,6 @@
 import { useState } from 'react';
 import { signIn, signOut, useSession } from "next-auth/react";
 
-export function SomeComponent() {
-  const { data: session } = useSession();
-
-  if (!session) {
-    return <div>Please log in</div>;
-  }
-
-  return <div>Welcome, {session.user?.name}!</div>;
-}
-
 export default function RegisterOrLogin() {
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({

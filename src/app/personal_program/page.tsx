@@ -3,8 +3,10 @@
 import { useState } from "react";
 import "../styles/styles.css";
 import { useRouter } from "next/navigation";
+import useAuthRedirect from "@/lib/authRedirect/useAuthRedirect";
 
 export default function PersonalPlanPage() {
+  useAuthRedirect();
   const router = useRouter();
   const [hoursNumber, setHoursNumber] = useState("");
   const [endDate, setEndDate] = useState("");

@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 //auth
-import Providers from "./providers";
+import Providers from "./providers"; // <--- Import the Providers
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route"; // <--- Import the Providers
+import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 
 export const metadata = {
   title: "Kitacademy",

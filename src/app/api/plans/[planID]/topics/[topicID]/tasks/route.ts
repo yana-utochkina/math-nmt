@@ -3,23 +3,24 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../../../lib/db";
 
-export const GET = async (request: Request, contex: any) => {
+export async function GET(request: Request, contex: { params: { planID: string } }) {
   try {
-    const { params } = contex;
-    const topicID = params.topicID;
-    const tasks = await prisma.task.findMany({
-      where: {
-        topicID: topicID,
-      },
-    });
+    const { params } = await contex;
+    const { planID } = await params;
+
+    const tasks = await prisma.plan.findUniqueOrThrow(
+      {
+        where: {
+          id: planID,
+        }
+      }
+    );
     return NextResponse.json(tasks, { status: 200 });
   }
-  catch (error: any) {
-    return NextResponse.json({ error: `TopicID error: ${error.message}` }, { status: 503 });
+  catch (error) {
+    return NextResponse.json({ error: `Tasks error: ${error.message}` }, { status: 503 });
   }
-
 };
-
 
 export const POST = async (request: Request, contex: any) => {
   try {

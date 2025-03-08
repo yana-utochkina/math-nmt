@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -8,13 +9,14 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(uuid()) @db.Uuid
+  id        String  @id @default(uuid()) @db.Uuid
   firstName String?
   nickname  String
   email     String     @unique
   password  String
-  Plan      Plan[]
-  UserTask  UserTask[]
+
+  UserTask UserTask[]
+  Plan     Plan[]
 }
 
 model Topic {
@@ -70,8 +72,9 @@ model Plan {
 model PlanTask {
   planID String @db.Uuid
   taskID String @db.Uuid
-  plan   Plan   @relation(fields: [planID], references: [id])
-  task   Task   @relation(fields: [taskID], references: [id])
+
+  plan Plan @relation(fields: [planID], references: [id])
+  task Task @relation(fields: [taskID], references: [id])
 
   @@id([planID, taskID])
 }

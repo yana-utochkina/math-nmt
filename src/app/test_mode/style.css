@@ -1,0 +1,39 @@
+/* стилі test_mode page */
+.answer-button {
+    color: black;
+    border: 1px solid #ccc;
+    background: white;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+  .answer-button:hover,
+  .answer-button.selected {
+    background-color: #007bff;
+    color: white;
+  }
+  .answer-button.correct {
+    background-color: green !important;
+    color: white !important;
+  }
+  .answer-button.incorrect {
+    background-color: red !important;
+    color: white !important;
+  }
+  .custom-button {
+    height: 60px;
+    width: 200px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease-in-out;
+  }
+  .custom-button:hover {
+    background-color: #0056b3;
+  }
+  .task-image {
+    transition: transform 1s ease-in-out;
+  }
+  .task-image.hovered {
+    transform: scale(1.1);
+  }

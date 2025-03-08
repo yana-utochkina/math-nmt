@@ -1,53 +1,69 @@
-// Read-запит на діставання id та description завдань конкретної теми та прогрес кожного завдання
-// 
+import { PlanTask } from "@prisma/client";
+import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../../../lib/db";
 
-export async function GET(request: Request, contex: { params: { planID: string } }) {
-  try {
-    const { params } = await contex;
-    const { planID } = await params;
+export async function GET(request: Request, context: { params: { planID: string, topicID: string } }) {
+    try {
+        const { params } = await context;
+        const { planID, topicID } = await params;
 
-    const tasks = await prisma.plan.findUniqueOrThrow(
-      {
-        where: {
-          id: planID,
+        const { userID } = await prisma.plan.findFirstOrThrow({
+            where: {
+                id: planID,
+            },
+            select: {
+                userID: true,
+            }
         }
-      }
-    );
-    return NextResponse.json(tasks, { status: 200 });
-  }
-  catch (error) {
-    return NextResponse.json({ error: `Tasks error: ${error.message}` }, { status: 503 });
-  }
-};
+        )
 
-export const POST = async (request: Request, contex: any) => {
-  try {
-    const { params } = contex;
-    const topicID = params.topicID;
-    const { description, problem, solution, type, answer } = await request.json();
-    const task = await prisma.task.create({
-      data: {
-        description: description,
-        problem: problem,
-        solution: solution,
-        type: type,
-        answer: answer,
-        topicID: topicID,
-      }
-    });
-    return NextResponse.json(task, { status: 200 });
-  }
-  catch (error: any) {
-    return NextResponse.json({ error: `Prisma error: ${error.message}` }, { status: 503 });
-  }
-};
+        const tasks = await prisma.task.findMany({
+            where: {
+                topicID: topicID,
+                PlanTask: {
+                    some: {
+                        planID: planID,
+                    }
+                }
+            },
+            include: {
+                PlanTask: {
+                    where: {
+                        planID: planID,
+                    }
+                },
+                UserTask: {
+                    where: {
+                        userID: userID,
+                    }
+                }
+            }
+        });
 
-export const PATCH = async (request: Request) => {
-  return new NextResponse(`Not implemented error`, { status: 501 });
+        return NextResponse.json(tasks, { status: 200 });
+    }
+    catch (error) {
+        return NextResponse.json({ error: `PlanTasks error: ${error.message}` }, { status: 503 });
+    }
 }
 
-export const DELETE = async (request: Request) => {
-  return new NextResponse(`Not implemented error`, { status: 501 });
-}
+export async function POST(request: Request, context: { params: { planID: string, topicID: string } }) {
+    try {
+        const { params } = await context;
+        const planID = await params.planID;
+
+        const body = await request.json();
+        const planTask: PlanTask = body;
+
+        const newPlanTask = await prisma.planTask.create({
+            data: {
+                planID: planID,
+                taskID: planTask.taskID,
+            }
+        });
+        return NextResponse.json(newPlanTask, { status: 201 });
+    }
+    catch (error) {
+        return NextResponse.json({ error: `Post PlanTask error: ${error.message}` }, { status: 503 });
+    }
+};

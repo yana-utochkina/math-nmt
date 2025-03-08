@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/db";
+import { prisma } from "@/lib/db";
+import { Topic } from "@prisma/client";
 
 export async function GET() {
     try {
@@ -7,33 +8,24 @@ export async function GET() {
         return NextResponse.json(topics, { status: 200 });
     }
     catch (error) {
-        return NextResponse.json(`Prisma error: ${error.message}`, { status: 503 });
+        return NextResponse.json({ error: `Prisma error: ${error.message}` }, { status: 503 });
     }
 }
 
 export async function POST(request: Request) {
     try {
-        const { searchParams } = new URL(request.url);
-        const parentID = searchParams.get("parentID");
-        const title = searchParams.get("title");
+        const body = await request.json();
 
-        const topic = await prisma.topic.create({
-            data: {
-                parentID,
-                title,
-            },
-        });
-        return NextResponse.json(topic, { status: 201 });
+        if (!body.parentID) throw new Error("Require parentID");
+        if (!body.title) throw new Error("Require title");
+
+        const topic: Topic = body;
+
+        const newTopic = await prisma.topic.create({ data: topic });
+
+        return NextResponse.json(newTopic, { status: 201 });
     }
     catch (error) {
-        return NextResponse.json(`Wrong topics creating params: ${error.message}`, { status: 400 });
+        return NextResponse.json({ error: `Wrong topics creating params: ${error.message}` }, { status: 400 });
     }
-}
-
-export async function PATCH() {
-    return new NextResponse(`Not implemented error`, { status: 501 });
-}
-
-export async function DELETE() {
-    return new NextResponse(`Not implemented error`, { status: 501 });
 }

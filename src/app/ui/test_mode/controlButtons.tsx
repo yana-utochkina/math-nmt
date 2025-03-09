@@ -5,6 +5,8 @@ interface ControlButtonsProps {
     submitted: boolean;
     canSubmit: boolean;
     showSolution: boolean;
+    isLastTask?: boolean;
+    nextButtonText?: string;
   }
   
   export function ControlButtons({
@@ -13,7 +15,9 @@ interface ControlButtonsProps {
     onShowSolution,
     submitted,
     canSubmit,
-    showSolution
+    showSolution,
+    isLastTask = false,
+    nextButtonText
   }: ControlButtonsProps) {
     return (
       <div className="row justify-content-center mt-3 gap-2">
@@ -28,7 +32,7 @@ interface ControlButtonsProps {
             onClick={onSubmit}
             disabled={!canSubmit}
           >
-            {submitted ? "Далі" : "Відповісти"}
+            {nextButtonText || (submitted ? (isLastTask ? "Завершити" : "Далі") : "Відповісти")}
           </button>
         </div>
         <div className="col-auto">

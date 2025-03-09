@@ -9,56 +9,17 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid()) @db.Uuid
-  firstName String?
-  nickname  String
-  email     String  @unique
-  password  String
-
-  UserTask UserTask[]
-  Plan     Plan[]
-
-  // authorization
-  emailVerified     DateTime?
-  verificationToken String? // Stores the token sent to the user
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                String     @id @default(uuid()) @db.Uuid
+  firstName         String?
+  nickname          String
+  email             String     @unique
+  password          String
+  emailVerified     Boolean    @default(false)
+  verificationToken String?
+  isAdmin           Boolean    @default(false)
+  Plan              Plan[]
+  UserTask          UserTask[]
 }
-
-// model Session {
-//   id           String @id @default(uuid()) @db.Uuid
-//   sessionToken String @unique
-//   userID       String @db.Uuid
-//
-//   user    User     @relation(fields: [userID], references: [id])
-//   expires DateTime
-// }
-//
-// model Account {
-//   id                String  @id @default(cuid())
-//   userID            String
-//   type              String
-//   provider          String
-//   providerAccountId String
-//   refresh_token     String?
-//   access_token      String?
-//   expires_at        Int?
-//   token_type        String?
-//   scope             String?
-//   id_token          String?
-//   session_state     String?
-//   user              User    @relation(fields: [userID], references: [id])
-//
-//   @@unique([provider, providerAccountId])
-// }
-//
-// model VerificationToken {
-//   identifier String
-//   token      String   @unique
-//   expires    DateTime
-//
-//   @@unique([identifier, token])
-// }
 
 model Topic {
   id       String  @id @default(uuid()) @db.Uuid
@@ -113,9 +74,8 @@ model Plan {
 model PlanTask {
   planID String @db.Uuid
   taskID String @db.Uuid
-
-  plan Plan @relation(fields: [planID], references: [id])
-  task Task @relation(fields: [taskID], references: [id])
+  plan   Plan   @relation(fields: [planID], references: [id])
+  task   Task   @relation(fields: [taskID], references: [id])
 
   @@id([planID, taskID])
 }

@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from 'react';
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
+
+// CHANGE: Import Resend and crypto for token generation and email sending
+import { Resend } from "resend";
+import crypto from "crypto";
+
+// CHANGE: Initialize Resend with your API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default function RegisterOrLogin() {
   const [isRegister, setIsRegister] = useState(false);
@@ -13,6 +20,9 @@ export default function RegisterOrLogin() {
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  // CHANGE: Add success state to show verification message
+  const [success, setSuccess] = useState<string | null>(null);
+
 
   const validateForm = () => {
     // Валідація тільки для реєстрації
@@ -44,9 +54,25 @@ export default function RegisterOrLogin() {
     return true;
   };
 
+
+  // CHANGE: Add function to send verification email
+  const sendVerificationEmail = async (email: string, token: string) => {
+    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-email?token=${token}`;
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM!,
+      to: email,
+      subject: "Підтвердіть вашу електронну пошту для NMT Prep",
+      html: `<p>Натисніть <a href="${verificationUrl}">тут</a>, щоб підтвердити вашу електронну пошту.</p>`,
+    });
+  };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // CHANGE: Clear success message on new submission
+    setSuccess(null);
 
     if (!validateForm()) return;
     
@@ -62,6 +88,8 @@ export default function RegisterOrLogin() {
             nickname: formData.nickname,
             email: formData.email,
             password: formData.password
+            // CHANGE: Add verification token to the API request (placeholder for now)
+            // verificationToken: crypto.randomUUID(), // Will be stored once schema is updated
           }),
         });
 
@@ -71,12 +99,32 @@ export default function RegisterOrLogin() {
           throw new Error(data.error || "Помилка реєстрації");
         }
 
+        // CHANGE: Generate token and send verification email
+        const token = crypto.randomUUID();
+        await sendVerificationEmail(formData.email, token);
+        // CHANGE: Update success message to inform user about verification
+        setSuccess("Реєстрація успішна! Перевірте вашу пошту для підтвердження.");
+
         alert("Реєстрація успішна! Увійдіть");
         setIsRegister(false);
         setFormData({ nickname: '', email: '', password: '', confirmPassword: '' });
 
       } else {
         // Тут буде логіка входу (потрібно реалізувати окремий API)
+        // CHANGE: Check email verification before login
+        const response = await fetch('/api/users/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email }),
+        });
+
+        const userData = await response.json();
+
+        if (!response.ok || !userData.emailVerified) {
+          setError("Будь ласка, підтвердіть вашу електронну пошту перед входом.");
+          return;
+        }
+
         const result = await signIn("credentials", {
           redirect: false, // Prevent NextAuth from redirecting automatically
           email: formData.email,
@@ -107,6 +155,13 @@ export default function RegisterOrLogin() {
         <h1 className="text-center mb-4 text-primary">
           {isRegister ? 'Реєстрація' : 'Вхід'}
         </h1>
+
+        {/* CHANGE: Add success message display */}
+        {success && (
+            <div className="alert alert-success mb-3" role="alert">
+              {success}
+            </div>
+        )}
 
         {error && (
             <div className="alert alert-danger mb-3" role="alert">

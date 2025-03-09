@@ -81,11 +81,3 @@ export const authOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
-
-// async redirect({ url, baseUrl }) {
-//     // You can redirect to a specific page after successful login
-//     if (url === '/login') {
-//         return baseUrl;  // Redirect to home page or the desired route
-//     }
-//     return url;
-// },

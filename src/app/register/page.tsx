@@ -56,15 +56,15 @@ export default function RegisterOrLogin() {
 
 
   // CHANGE: Add function to send verification email
-  const sendVerificationEmail = async (email: string, token: string) => {
-    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-email?token=${token}`;
-    await resend.emails.send({
-      from: process.env.EMAIL_FROM!,
-      to: email,
-      subject: "Підтвердіть вашу електронну пошту для NMT Prep",
-      html: `<p>Натисніть <a href="${verificationUrl}">тут</a>, щоб підтвердити вашу електронну пошту.</p>`,
-    });
-  };
+  // const sendVerificationEmail = async (email: string, token: string) => {
+  //   const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-email?token=${token}`;
+  //   await resend.emails.send({
+  //     from: process.env.EMAIL_FROM!,
+  //     to: email,
+  //     subject: "Підтвердіть вашу електронну пошту для NMT Prep",
+  //     html: `<p>Натисніть <a href="${verificationUrl}">тут</a>, щоб підтвердити вашу електронну пошту.</p>`,
+  //   });
+  // };
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,9 +87,9 @@ export default function RegisterOrLogin() {
           body: JSON.stringify({
             nickname: formData.nickname,
             email: formData.email,
-            password: formData.password
+            password: formData.password,
             // CHANGE: Add verification token to the API request (placeholder for now)
-            // verificationToken: crypto.randomUUID(), // Will be stored once schema is updated
+            verificationToken: crypto.randomUUID(), // Will be stored once schema is updated
           }),
         });
 
@@ -101,7 +101,7 @@ export default function RegisterOrLogin() {
 
         // CHANGE: Generate token and send verification email
         const token = crypto.randomUUID();
-        await sendVerificationEmail(formData.email, token);
+        // await sendVerificationEmail(formData.email, token);
         // CHANGE: Update success message to inform user about verification
         setSuccess("Реєстрація успішна! Перевірте вашу пошту для підтвердження.");
 
@@ -112,18 +112,18 @@ export default function RegisterOrLogin() {
       } else {
         // Тут буде логіка входу (потрібно реалізувати окремий API)
         // CHANGE: Check email verification before login
-        const response = await fetch('/api/users/check', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: formData.email }),
-        });
-
-        const userData = await response.json();
-
-        if (!response.ok || !userData.emailVerified) {
-          setError("Будь ласка, підтвердіть вашу електронну пошту перед входом.");
-          return;
-        }
+        // const response = await fetch('/api/users/check', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ email: formData.email }),
+        // });
+        //
+        // const userData = await response.json();
+        //
+        // if (!response.ok || !userData.emailVerified) {
+        //   setError("Будь ласка, підтвердіть вашу електронну пошту перед входом.");
+        //   return;
+        // }
 
         const result = await signIn("credentials", {
           redirect: false, // Prevent NextAuth from redirecting automatically

@@ -29,7 +29,7 @@ export async function GET(request: Request) {
         });
 
         // Redirect to login with success message
-        return NextResponse.redirect(new URL("/login?verified=true", request.url));
+        return NextResponse.redirect(new URL("/register?verified=true", request.url));
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Failed to verify email" }, { status: 500 });

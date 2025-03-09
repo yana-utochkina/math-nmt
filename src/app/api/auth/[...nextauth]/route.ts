@@ -38,6 +38,10 @@ export const authOptions = {
                     throw new Error("User not found");
                 }
 
+                if (!user.emailVerified) {
+                    throw new Error('Please verify your email before logging in');
+                }
+
                 // const isValid = await bcrypt.compare(credentials.password, user.password);
                 const isValid = (credentials.password == user.password);
                 if (!isValid) {
@@ -65,13 +69,6 @@ export const authOptions = {
             session.user.email = token.email;
             return session;
         },
-        // async redirect({ url, baseUrl }) {
-        //     // You can redirect to a specific page after successful login
-        //     if (url === '/register') {
-        //         return "/edit_profile";  // Redirect to home page or the desired route
-        //     }
-        //     return url;
-        // },
     },
     pages: {
         signIn: "/register", // Redirect to your login page

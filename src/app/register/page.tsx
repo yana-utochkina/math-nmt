@@ -3,13 +3,6 @@
 import { useState } from 'react';
 import { signIn, signOut } from "next-auth/react";
 
-// CHANGE: Import Resend and crypto for token generation and email sending
-import { Resend } from "resend";
-import crypto from "crypto";
-
-// CHANGE: Initialize Resend with your API key
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export default function RegisterOrLogin() {
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({
@@ -54,19 +47,6 @@ export default function RegisterOrLogin() {
     return true;
   };
 
-
-  // CHANGE: Add function to send verification email
-  // const sendVerificationEmail = async (email: string, token: string) => {
-  //   const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-email?token=${token}`;
-  //   await resend.emails.send({
-  //     from: process.env.EMAIL_FROM!,
-  //     to: email,
-  //     subject: "Підтвердіть вашу електронну пошту для NMT Prep",
-  //     html: `<p>Натисніть <a href="${verificationUrl}">тут</a>, щоб підтвердити вашу електронну пошту.</p>`,
-  //   });
-  // };
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -88,8 +68,6 @@ export default function RegisterOrLogin() {
             nickname: formData.nickname,
             email: formData.email,
             password: formData.password,
-            // CHANGE: Add verification token to the API request (placeholder for now)
-            verificationToken: crypto.randomUUID(), // Will be stored once schema is updated
           }),
         });
 
@@ -100,7 +78,6 @@ export default function RegisterOrLogin() {
         }
 
         // CHANGE: Generate token and send verification email
-        const token = crypto.randomUUID();
         // await sendVerificationEmail(formData.email, token);
         // CHANGE: Update success message to inform user about verification
         setSuccess("Реєстрація успішна! Перевірте вашу пошту для підтвердження.");

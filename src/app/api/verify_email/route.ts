@@ -28,7 +28,7 @@ export async function GET(request: Request) {
             },
         });
 
-        // Redirect to login with success message
+        // Redirect to registerOrLogin with success message
         return NextResponse.redirect(new URL("/register?verified=true", request.url));
     } catch (err) {
         console.error(err);

@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { signIn, signOut } from "next-auth/react";
+import {useSearchParams} from "next/navigation";
+import {useEffect} from "react";
+
 
 export default function RegisterOrLogin() {
   const [isRegister, setIsRegister] = useState(false);
@@ -16,6 +19,14 @@ export default function RegisterOrLogin() {
   // CHANGE: Add success state to show verification message
   const [success, setSuccess] = useState<string | null>(null);
 
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('verified') === 'true') {
+      setSuccess('Email verified! Please log in.');
+    }
+  }, [searchParams]);
 
   const validateForm = () => {
     // Валідація тільки для реєстрації
@@ -78,14 +89,15 @@ export default function RegisterOrLogin() {
         }
 
         // CHANGE: Generate token and send verification email
-        // await sendVerificationEmail(formData.email, token);
-        // CHANGE: Update success message to inform user about verification
-        setSuccess("Реєстрація успішна! Перевірте вашу пошту для підтвердження.");
+        await fetch('/api/send-verification-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email, token: data.token }),
+        });
 
-        alert("Реєстрація успішна! Увійдіть");
+        setSuccess("Реєстрація успішна! Перевірте вашу пошту для підтвердження.");
         setIsRegister(false);
         setFormData({ nickname: '', email: '', password: '', confirmPassword: '' });
-
       } else {
         // Тут буде логіка входу (потрібно реалізувати окремий API)
         // CHANGE: Check email verification before login

@@ -89,7 +89,7 @@ export default function RegisterOrLogin() {
         }
 
         // CHANGE: Generate token and send verification email
-        await fetch('/api/send-verification-email', {
+        await fetch('/api/send_verification_email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: formData.email, token: data.token }),

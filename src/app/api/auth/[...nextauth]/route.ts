@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/db";
-// import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 console.log("NextAuth configuration is being loaded...");
 
 import NextAuth from "next-auth";
@@ -42,8 +42,8 @@ export const authOptions = {
                     throw new Error('Please verify your email before logging in');
                 }
 
-                // const isValid = await bcrypt.compare(credentials.password, user.password);
-                const isValid = (credentials.password == user.password);
+                const isValid = await bcrypt.compare(credentials.password, user.password);
+                // const isValid = (credentials.password == user.password);
                 if (!isValid) {
                     throw new Error("Incorrect password");
                 }

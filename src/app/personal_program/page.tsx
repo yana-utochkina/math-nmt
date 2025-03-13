@@ -3,10 +3,9 @@
 import { useState } from "react";
 import "../styles/styles.css";
 import { useRouter } from "next/navigation";
-import useAuthRedirect from "@/lib/authRedirect/useAuthRedirect";
+import Link from "next/link";
 
 export default function PersonalPlanPage() {
-  useAuthRedirect();
   const router = useRouter();
   const [hoursNumber, setHoursNumber] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -75,18 +74,18 @@ export default function PersonalPlanPage() {
                 під ваші теперішні знання
               </h2>
               <div className="d-flex justify-content-center mb-3">
-                <a
-                  href="/test_mode/716cb5d6-a58b-4b29-b219-ac7e18118cda"
-                  className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center"
-                  style={{
-                    height: "100px",
-                    width: "300px",
-                    fontSize: "1.2rem",
-                    textAlign: "center",
-                  }}
-                >
-                  Пройти швидкий тест
-                </a>
+              <Link
+                 href="/test_mode/716cb5d6-a58b-4b29-b219-ac7e18118cda"
+                 className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center"
+                 style={{
+                   height: "100px",
+                   width: "300px",
+                   fontSize: "1.2rem",
+                   textAlign: "center",
+                 }}
+               >
+                 Пройти швидкий тест
+               </Link>
               </div>
 
               {showCheckbox && (

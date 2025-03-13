@@ -33,13 +33,28 @@ export default function TestModePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  
+
+  const [timeLeft, setTimeLeft] = useState(60 * 60); // 1 година в секундах
+  const [timerActive, setTimerActive] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null); // Час початку тесту
+  const [shouldUseTimer, setShouldUseTimer] = useState(false); // Флаг для використання таймера
+
   const [results, setResults] = useState<{correct: number, total: number}>({
     correct: 0,
     total: 0
   });
 
   const options = ["А", "Б", "В", "Г", "Д"];
+
+  // Функція для перевірки, чи потрібно активувати таймер
+  const checkIfTimerNeeded = (title: string): boolean => {
+    // Перевіряємо, чи починається заголовок з числа
+    const startsWithNumber = /^\d/.test(title);
+    // Перевіряємо, чи це "Швидкий тест"
+    const isQuickTest = title === "Швидкий тест";
+    
+    return startsWithNumber || isQuickTest;
+  };
 
   // Завантаження завдань
   useEffect(() => {
@@ -60,6 +75,10 @@ export default function TestModePage() {
         // Отримуємо title теми
         setTitle(data.title);
         
+        // Перевіряємо умову для таймера
+        const timerNeeded = checkIfTimerNeeded(data.title);
+        setShouldUseTimer(timerNeeded);
+
         // Сортування
         const sortedTasks = [...data.Task].sort((a: Task, b: Task) => {
           // Визначаємо пріоритет типів
@@ -82,6 +101,12 @@ export default function TestModePage() {
         setResults(prev => ({...prev, total: sortedTasks.length}));
 
         setTasks(sortedTasks);
+
+        if (timerNeeded) {
+          setTimerActive(true);
+        }
+        setStartTime(Date.now());
+
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -91,6 +116,42 @@ export default function TestModePage() {
     
     fetchTasks();
   }, [topicId]);
+
+  // Логіка таймера
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (timerActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prevTime => prevTime - 1);
+      }, 1000);
+    } else if (timerActive && timeLeft === 0) {
+      // Час вичерпано - перенаправляємо на сторінку результатів
+      handleTestCompletion();
+    }
+    
+    return () => clearInterval(interval);
+  }, [timerActive, timeLeft]);
+
+  // Функція для форматування часу
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  // Функція для розрахунку часу проходження
+  const calculateCompletionTime = (): number => {
+    if (!startTime) return 0;
+    const now = Date.now();
+    return Math.floor((now - startTime) / 1000); // Повертає час в секундах
+  };
+
+  // Функція обробки завершення тесту
+  const handleTestCompletion = () => {
+    const completionTime = calculateCompletionTime();
+    router.push(`/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}&time=${completionTime}`);
+  };
 
   // Відображення конфеті
   const [numPieces, setNumPieces] = useState(300);
@@ -154,7 +215,7 @@ export default function TestModePage() {
      
      if (isLastTask) {
        // Перехід на сторінку результатів
-       router.push(`/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}`);
+       handleTestCompletion();
      } else {
        // Перехід до наступного завдання
        setSubmitted(false);
@@ -233,6 +294,18 @@ export default function TestModePage() {
       <main className="flex-grow-1">
         <div className="container py-4">
           <div className="d-flex justify-content-between align-items-center mb-3 position-relative">
+            {/* Таймер - відображаємо лише якщо активний */}
+            {shouldUseTimer && (
+              <div className="position-absolute start-0 d-flex align-items-center">
+                <div className="timer-container">
+                  <h5 className="mb-0">
+                    <span className="badge bg-primary">
+                      Час: {formatTime(timeLeft)}
+                    </span>
+                  </h5>
+                </div>
+              </div>
+            )}
             <h4 className="position-absolute start-50 translate-middle-x">
               Тема: {title || "Невідома"}
             </h4>

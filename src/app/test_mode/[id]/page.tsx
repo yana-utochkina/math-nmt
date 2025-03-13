@@ -2,7 +2,7 @@
 
 import Confetti from "react-confetti";
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { 
   Task, 
   MultipleLettersAnswer, 
@@ -21,18 +21,24 @@ import '../style.css';
 export default function TestModePage() {
   const params = useParams();
   const topicId = params?.id as string;
+  const router = useRouter();
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState("");
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [answer, setAnswer] = useState<string | MultipleLettersAnswer>("");
-  const [isCorrect ,setIsCorrect] = useState(false);
+  //const [isCorrect ,setIsCorrect] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   
+  const [results, setResults] = useState<{correct: number, total: number}>({
+    correct: 0,
+    total: 0
+  });
+
   const options = ["А", "Б", "В", "Г", "Д"];
 
   // Завантаження завдань
@@ -73,6 +79,8 @@ export default function TestModePage() {
           return priorityA - priorityB;
         });
         
+        setResults(prev => ({...prev, total: sortedTasks.length}));
+
         setTasks(sortedTasks);
       } catch (error: any) {
         setError(error.message);
@@ -142,9 +150,17 @@ export default function TestModePage() {
 
   // Перехід до наступного завдання
   const handleNextTask = () => {
-    setSubmitted(false);
-    setShowSolution(false);
-    setCurrentTaskIndex(prev => (prev + 1) % tasks.length);
+    const isLastTask = currentTaskIndex === tasks.length - 1;
+     
+     if (isLastTask) {
+       // Перехід на сторінку результатів
+       router.push(`/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}`);
+     } else {
+       // Перехід до наступного завдання
+       setSubmitted(false);
+       setShowSolution(false);
+       setCurrentTaskIndex(prev => prev + 1);
+     }
   };
 
   // Перевірка відповіді
@@ -176,10 +192,11 @@ export default function TestModePage() {
           break;
       }
 
-      setIsCorrect(calculatedIsCorrect);
+      //setIsCorrect(calculatedIsCorrect);
       setSubmitted(true);
       if (calculatedIsCorrect) {
         setShowConfetti(true);
+        setResults(prev => ({...prev, correct: prev.correct + 1}));
       }
     } else {
       handleNextTask();
@@ -193,6 +210,9 @@ export default function TestModePage() {
   const answerType = getAnswerType(currentTask);
   const canSubmit = !!answer && 
     (typeof answer !== 'object' || Object.values(answer).some(v => !!v));
+
+    // Визначаємо, чи це останнє завдання
+   const isLastTask = currentTaskIndex === tasks.length - 1;
 
   return (
     <div className="d-flex flex-column justify-content-between min-vh-100">
@@ -260,6 +280,8 @@ export default function TestModePage() {
             submitted={submitted}
             canSubmit={canSubmit}
             showSolution={showSolution}
+            isLastTask={isLastTask}
+            nextButtonText={submitted && isLastTask ? "Завершити" : (submitted ? "Далі" : "Відповісти")}
           />
         </div>
       </main>

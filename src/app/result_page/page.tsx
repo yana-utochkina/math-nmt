@@ -15,7 +15,8 @@ export default function ResultsPage() {
   const topicId = searchParams.get('topicId');
   const correct = parseInt(searchParams.get('correct') || '0');
   const total = parseInt(searchParams.get('total') || '0');
-  const completionTime = parseInt(searchParams.get('time') || '0'); // Час проходження тесту
+  const timeParam = searchParams.get('time');
+  const completionTime = timeParam ? parseInt(timeParam) : null;  // Час проходження тесту
   
   // number of correct answers
   const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
@@ -117,9 +118,11 @@ export default function ResultsPage() {
                 </h4>
                 
                 {/* Відображення часу проходження */}
-                <h5 className="mb-3">
-                  Час проходження: <strong>{formatCompletionTime(completionTime)}</strong>
-                </h5>
+                {completionTime !== null && (
+                  <h5 className="mb-3">
+                    Час проходження: <strong>{formatCompletionTime(completionTime)}</strong>
+                  </h5>
+                )}
                 
                 <p className="fs-5 mb-4">{getResultMessage()}</p>
               </div>

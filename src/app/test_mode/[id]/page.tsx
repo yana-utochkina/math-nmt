@@ -34,6 +34,8 @@ export default function TestModePage() {
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
 
+  const [testCompleted, setTestCompleted] = useState(false);
+
   const [timeLeft, setTimeLeft] = useState(60 * 60); // 1 година в секундах
   const [timerActive, setTimerActive] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null); // Час початку тесту
@@ -104,8 +106,8 @@ export default function TestModePage() {
 
         if (timerNeeded) {
           setTimerActive(true);
+          setStartTime(Date.now());
         }
-        setStartTime(Date.now());
 
       } catch (error: any) {
         setError(error.message);
@@ -149,10 +151,12 @@ export default function TestModePage() {
 
   // Функція обробки завершення тесту
   const handleTestCompletion = () => {
+    setTestCompleted(true);
+    
     const completionTime = calculateCompletionTime();
-    router.push(`/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}&time=${completionTime}`);
+    const timeParam = shouldUseTimer ? `&time=${completionTime}` : '';
+    router.push(`/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}${timeParam}`);
   };
-
   // Відображення конфеті
   const [numPieces, setNumPieces] = useState(300);
   const [opacity, setOpacity] = useState(1);

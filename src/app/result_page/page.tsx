@@ -1,12 +1,11 @@
 "use client";
  
 import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
  
 export default function ResultsPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(true);
@@ -80,8 +79,8 @@ export default function ResultsPage() {
     return "text-danger";
   };
   
-  if (loading) return <p className="text-center p-5">Завантаження результатів...</p>;
-  if (error) return <p className="text-center p-5 text-danger">Помилка: {error}</p>;
+  if (loading) return <p className="text-center fs-4 fw-bold mt-5">Завантаження результатів...</p>;
+  if (error) return <p className="text-center fs-4 fw-bold text-danger mt-5">Помилка: {error}</p>;
   
   return (
     <div className="container py-5">
@@ -117,7 +116,6 @@ export default function ResultsPage() {
                   Правильних відповідей: <strong>{correct}</strong> з <strong>{total}</strong>
                 </h4>
                 
-                {/* Відображення часу проходження */}
                 {completionTime !== null && (
                   <h5 className="mb-3">
                     Час проходження: <strong>{formatCompletionTime(completionTime)}</strong>

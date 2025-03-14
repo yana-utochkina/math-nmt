@@ -61,7 +61,6 @@ type TestCompletionParams = {
   topicId: string;
   results: { correct: number; total: number };
   router: any;
-  //setTestCompleted: (value: boolean) => void;
 };
 
 // Функція обробки завершення тесту
@@ -71,9 +70,7 @@ export const handleTestCompletion = ({
   topicId,
   results,
   router
-  //setTestCompleted
 }: TestCompletionParams): void => {
-  //setTestCompleted(true);
   const completionTime = calculateCompletionTime(startTime);
   const timeParam = shouldUseTimer ? `&time=${completionTime}` : '';
   router.push(

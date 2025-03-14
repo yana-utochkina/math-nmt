@@ -3,15 +3,10 @@
 import Confetti from "react-confetti";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { 
-  Task, 
-  MultipleLettersAnswer, 
-} from "../types";
-import { 
-  getAnswerType,
-  checkSingleLetterAnswer,
-  checkMultipleLettersAnswer,
-  checkNumberAnswer
+
+import { Task, MultipleLettersAnswer } from "../types";
+import { getAnswerType,  checkSingleLetterAnswer,  checkMultipleLettersAnswer, 
+  checkNumberAnswer, checkIfTimerNeeded,  formatTime,  handleTestCompletion 
 } from "../utils";
 import { TaskImage } from "../../ui/test_mode/taskImage";
 import { AnswerButtons } from "../../ui/test_mode/answerButtons";
@@ -28,36 +23,18 @@ export default function TestModePage() {
   const [title, setTitle] = useState("");
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [answer, setAnswer] = useState<string | MultipleLettersAnswer>("");
-  //const [isCorrect ,setIsCorrect] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-
-  const [testCompleted, setTestCompleted] = useState(false);
-
   const [timeLeft, setTimeLeft] = useState(60 * 60); // 1 година в секундах
   const [timerActive, setTimerActive] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null); // Час початку тесту
   const [shouldUseTimer, setShouldUseTimer] = useState(false); // Флаг для використання таймера
-
-  const [results, setResults] = useState<{correct: number, total: number}>({
-    correct: 0,
-    total: 0
-  });
+  const [results, setResults] = useState<{correct: number, total: number}>({correct: 0, total: 0});
 
   const options = ["А", "Б", "В", "Г", "Д"];
-
-  // Функція для перевірки, чи потрібно активувати таймер
-  const checkIfTimerNeeded = (title: string): boolean => {
-    // Перевіряємо, чи починається заголовок з числа
-    const startsWithNumber = /^\d/.test(title);
-    // Перевіряємо, чи це "Швидкий тест"
-    const isQuickTest = title === "Швидкий тест";
-    
-    return startsWithNumber || isQuickTest;
-  };
 
   // Завантаження завдань
   useEffect(() => {
@@ -66,7 +43,6 @@ export default function TestModePage() {
       setLoading(false);
       return;
     }
-    
     async function fetchTasks() {
       try {
         const res = await fetch(`http://localhost:3000/api/topics/${topicId}`, { cache: "no-store" });
@@ -77,7 +53,7 @@ export default function TestModePage() {
         
         // Отримуємо title теми
         setTitle(data.title);
-        
+
         // Перевіряємо умову для таймера
         const timerNeeded = checkIfTimerNeeded(data.title);
         setShouldUseTimer(timerNeeded);
@@ -94,29 +70,24 @@ export default function TestModePage() {
               return 4;
             }
           };
-          
           const priorityA = getTypePriority(a.type, a.answer);
           const priorityB = getTypePriority(b.type, b.answer);
-          
           return priorityA - priorityB;
         });
-        
-        setResults(prev => ({...prev, total: sortedTasks.length}));
 
+        setResults(prev => ({...prev, total: sortedTasks.length}));
         setTasks(sortedTasks);
 
         if (timerNeeded) {
           setTimerActive(true);
           setStartTime(Date.now());
         }
-
       } catch (error: any) {
         setError(error.message);
       } finally {
         setLoading(false);
       }
     }
-    
     fetchTasks();
   }, [topicId]);
 
@@ -130,34 +101,11 @@ export default function TestModePage() {
       }, 1000);
     } else if (timerActive && timeLeft === 0) {
       // Час вичерпано - перенаправляємо на сторінку результатів
-      handleTestCompletion();
+      handleTestCompletion({startTime, shouldUseTimer, topicId, results, router});
     }
-    
     return () => clearInterval(interval);
   }, [timerActive, timeLeft]);
 
-  // Функція для форматування часу
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
-  // Функція для розрахунку часу проходження
-  const calculateCompletionTime = (): number => {
-    if (!startTime) return 0;
-    const now = Date.now();
-    return Math.floor((now - startTime) / 1000); // Повертає час в секундах
-  };
-
-  // Функція обробки завершення тесту
-  const handleTestCompletion = () => {
-    setTestCompleted(true);
-    
-    const completionTime = calculateCompletionTime();
-    const timeParam = shouldUseTimer ? `&time=${completionTime}` : '';
-    router.push(`/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}${timeParam}`);
-  };
   // Відображення конфеті
   const [numPieces, setNumPieces] = useState(300);
   const [opacity, setOpacity] = useState(1);
@@ -167,7 +115,6 @@ export default function TestModePage() {
 
     if (showConfetti) {
       document.body.style.overflowX = 'hidden';
-
       setNumPieces(300);
       setOpacity(1);
 
@@ -175,14 +122,12 @@ export default function TestModePage() {
         setOpacity(0);
         timeout2 = setTimeout(() => {
           setNumPieces(0);
-          setShowConfetti(false); // Додано скидання стану
+          setShowConfetti(false);
         }, 2000);
       }, 2000);
-
     } else {
       document.body.style.overflowX = 'auto';
     }
-
     return () => {
       document.body.style.overflowX = 'auto';
       clearTimeout(timeout1);
@@ -217,12 +162,10 @@ export default function TestModePage() {
   // Перехід до наступного завдання
   const handleNextTask = () => {
     const isLastTask = currentTaskIndex === tasks.length - 1;
-     
      if (isLastTask) {
        // Перехід на сторінку результатів
-       handleTestCompletion();
+       handleTestCompletion({startTime, shouldUseTimer, topicId, results, router});
      } else {
-       // Перехід до наступного завдання
        setSubmitted(false);
        setShowSolution(false);
        setCurrentTaskIndex(prev => prev + 1);
@@ -258,7 +201,6 @@ export default function TestModePage() {
           break;
       }
 
-      //setIsCorrect(calculatedIsCorrect);
       setSubmitted(true);
       if (calculatedIsCorrect) {
         setShowConfetti(true);
@@ -274,8 +216,7 @@ export default function TestModePage() {
   if (!tasks.length) return <p className="text-center fs-4 fw-bold mt-5">Завдання не знайдені</p>;
 
   const answerType = getAnswerType(currentTask);
-  const canSubmit = !!answer && 
-    (typeof answer !== 'object' || Object.values(answer).some(v => !!v));
+  const canSubmit = !!answer && (typeof answer !== 'object' || Object.values(answer).some(v => !!v));
 
     // Визначаємо, чи це останнє завдання
    const isLastTask = currentTaskIndex === tasks.length - 1;

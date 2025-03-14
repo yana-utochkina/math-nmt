@@ -16,6 +16,7 @@ import {
 import { TaskImage } from "../../ui/test_mode/taskImage";
 import { AnswerButtons } from "../../ui/test_mode/answerButtons";
 import { ControlButtons } from "../../ui/test_mode/controlButtons";
+import { PageHeader } from "../../ui/test_mode/pageHeader";
 import '../style.css';
 
 export default function TestModePage() {
@@ -268,9 +269,9 @@ export default function TestModePage() {
     }
   };
 
-  if (loading) return <p>Завантаження...</p>;
-  if (error) return <p>Помилка: {error}</p>;
-  if (!tasks.length) return <p>Завдання не знайдені</p>;
+  if (loading) return <p className="text-center fs-4 fw-bold mt-5">Завантаження...</p>;
+  if (error) return <p className="text-center fs-4 fw-bold text-danger mt-5">Помилка: {error}</p>;
+  if (!tasks.length) return <p className="text-center fs-4 fw-bold mt-5">Завдання не знайдені</p>;
 
   const answerType = getAnswerType(currentTask);
   const canSubmit = !!answer && 
@@ -297,24 +298,14 @@ export default function TestModePage() {
       )}
       <main className="flex-grow-1">
         <div className="container py-4">
-          <div className="d-flex justify-content-between align-items-center mb-3 position-relative">
-            {/* Таймер - відображаємо лише якщо активний */}
-            {shouldUseTimer && (
-              <div className="position-absolute start-0 d-flex align-items-center">
-                <div className="timer-container">
-                  <h5 className="mb-0">
-                    <span className="badge bg-primary">
-                      Час: {formatTime(timeLeft)}
-                    </span>
-                  </h5>
-                </div>
-              </div>
-            )}
-            <h4 className="position-absolute start-50 translate-middle-x">
-              Тема: {title || "Невідома"}
-            </h4>
-            <h5 className="ms-auto">{`Завдання ${currentTaskIndex + 1} з ${tasks.length}`}</h5>
-          </div>
+        <PageHeader 
+            title={title}
+            currentTaskIndex={currentTaskIndex}
+            totalTasks={tasks.length}
+            timeLeft={timeLeft}
+            shouldUseTimer={shouldUseTimer}
+            formatTime={formatTime}
+          />
 
           <div className="row justify-content-center">
             <div className="col-md-8 d-flex flex-column align-items-center text-center">

@@ -4,6 +4,7 @@ import Confetti from "react-confetti";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+import useUnsavedChangesWarning from "../routerWarning";
 import { Task, MultipleLettersAnswer } from "../types";
 import { getAnswerType,  checkSingleLetterAnswer,  checkMultipleLettersAnswer, 
   checkNumberAnswer, checkIfTimerNeeded,  formatTime,  handleTestCompletion 
@@ -91,6 +92,8 @@ export default function TestModePage() {
     fetchTasks();
   }, [topicId]);
 
+  useUnsavedChangesWarning(timerActive);
+
   // Логіка таймера
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -169,6 +172,9 @@ export default function TestModePage() {
        setSubmitted(false);
        setShowSolution(false);
        setCurrentTaskIndex(prev => prev + 1);
+
+       //для кнопки "назад"
+       window.history.replaceState(null, "", window.location.pathname);
      }
   };
 

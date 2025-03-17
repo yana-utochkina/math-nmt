@@ -174,7 +174,7 @@ export default function TestModePage() {
        setCurrentTaskIndex(prev => prev + 1);
 
        //для кнопки "назад"
-       window.history.replaceState(null, "", window.location.pathname);
+       //window.history.replaceState(null, "", window.location.pathname);
      }
   };
 

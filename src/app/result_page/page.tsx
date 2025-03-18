@@ -125,7 +125,8 @@ export default function ResultsPage() {
                 <p className="fs-5 mb-4">{getResultMessage()}</p>
               </div>
               
-              <div className="d-flex justify-content-center gap-3">
+              {/* <div className="d-flex justify-content-center gap-3"> */}
+              <div className="d-flex flex-column flex-md-row justify-content-center gap-3">
                 <Link href={`/test_mode/${topicId}`} className="btn btn-primary btn-lg">
                   Спробувати ще раз
                 </Link>

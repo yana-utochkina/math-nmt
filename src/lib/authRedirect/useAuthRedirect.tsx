@@ -8,7 +8,10 @@ const useAuthRedirect = () => {
 
     useEffect(() => {
         if (status === "unauthenticated") {
-            router.replace("/register");
+            const currentUrl = window.location.href; // Get the current page URL
+            const callbackUrl = encodeURIComponent(currentUrl);
+            router.replace(`/register?callbackUrl=${callbackUrl}`);
+            // router.replace("/register");
         }
     }, [status, router]);
 

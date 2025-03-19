@@ -35,17 +35,17 @@ export const authOptions = {
                 });
 
                 if (!user || !user.password) {
-                    throw new Error("User not found");
+                    throw new Error("Юзер не знайдений");
                 }
 
                 if (!user.emailVerified) {
-                    throw new Error('Please verify your email before logging in');
+                    throw new Error('Підтвердьте свою електронну адресу перед входом');
                 }
 
                 const isValid = await bcrypt.compare(credentials.password, user.password);
                 // const isValid = (credentials.password == user.password);
                 if (!isValid) {
-                    throw new Error("Incorrect password");
+                    throw new Error("Неправильний пароль");
                 }
 
                 return { id: user.id, email: user.email };

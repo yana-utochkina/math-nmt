@@ -100,7 +100,8 @@ export default function RegisterOrLogin() {
         setFormData({ nickname: '', email: '', password: '', confirmPassword: '' });
       } else {
         // Тут буде логіка входу (потрібно реалізувати окремий API)
-        // CHANGE: Check email verification before login
+        // CHANGE: Check email verification before login sth is wrong here:
+        // moved logic to api/auth/route.ts to check verification
         // const response = await fetch('/api/users/check', {
         //   method: 'POST',
         //   headers: { 'Content-Type': 'application/json' },
@@ -121,13 +122,10 @@ export default function RegisterOrLogin() {
         });
 
         if (result?.error) {
-          setError("Невірний email або пароль"); // Show an error message
+          setError(result.error || "Невірний email або пароль"); // Show an error message
         } else {
           window.location.href = "/user_profile"; // Redirect to a protected page
         }
-
-        console.log('Логін:', formData);
-
         return;
       }
 

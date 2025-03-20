@@ -24,7 +24,7 @@ export default function RegisterOrLogin() {
 
   useEffect(() => {
     if (searchParams.get('verified') === 'true') {
-      setSuccess('Email verified! Please log in.');
+      setSuccess('Емейл верифіковано! Увійдіть в акаунт.');
     }
   }, [searchParams]);
 

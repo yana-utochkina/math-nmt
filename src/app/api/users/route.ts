@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
     // Return success response with token
     return NextResponse.json(
-        { message: "User registered. Check your email to verify.", token: verificationToken },
+        { message: "Користувач зареєстрований. Перевірте свою електронну пошту для підтвердження.", token: verificationToken },
         { status: 201 }
     );
 
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   catch (error) {
 
     if (error.code === "P2002") {
-      return NextResponse.json({ error: "This email has already been registered" }, { status: 409 });
+      return NextResponse.json({ error: "Ця електронна пошта вже зареєстрована" }, { status: 409 });
     }
     return NextResponse.json({ error: "Failed to add user" }, { status: 500 });
   }

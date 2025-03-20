@@ -14,8 +14,6 @@ const useAuthRedirect = () => {
             // router.replace("/register");
         }
     }, [status, router]);
-
-    // No need to return anything
 };
 
 export default useAuthRedirect;

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db"; // Adjust path to your Prisma client
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const token = searchParams.get("token");
+    const callbackUrl = searchParams.get("callbackUrl");
 
     if (!token) {
         return NextResponse.json({ error: "No token provided" }, { status: 400 });
@@ -28,8 +29,16 @@ export async function GET(request: Request) {
             },
         });
 
+        // Include callbackUrl in the redirect
+        const redirectUrl = new URL("/register", request.url);
+        redirectUrl.searchParams.set("verified", "true");
+        if (callbackUrl) {
+            redirectUrl.searchParams.set("callbackUrl", callbackUrl);
+        }
+        return NextResponse.redirect(redirectUrl);
+
         // Redirect to registerOrLogin with success message
-        return NextResponse.redirect(new URL("/register?verified=true", request.url));
+        // return NextResponse.redirect(new URL("/register?verified=true", request.url));
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Failed to verify email" }, { status: 500 });

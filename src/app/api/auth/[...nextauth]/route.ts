@@ -27,7 +27,7 @@ export const authOptions = {
             async authorize(credentials) {
 
                 if (!credentials?.email || !credentials?.password) {
-                    throw new Error("Email and password are required");
+                    throw new Error("Потрібна електронна адреса та пароль");
                 }
 
                 const user = await prisma.user.findUnique({

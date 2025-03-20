@@ -69,6 +69,9 @@ export default function RegisterOrLogin() {
     
     setIsLoading(true);
 
+
+    const callbackUrl = searchParams.get("callbackUrl") || "/user_profile"; // Default fallback
+
     try {
       if (isRegister) {
         // Запит реєстрації
@@ -92,7 +95,11 @@ export default function RegisterOrLogin() {
         await fetch('/api/send_verification_email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: formData.email, token: data.token }),
+          body: JSON.stringify({
+            email: formData.email,
+            token: data.token,
+            callbackUrl,
+          }),
         });
 
         setSuccess("Реєстрація успішна! Перевірте вашу пошту для підтвердження.");
@@ -124,7 +131,7 @@ export default function RegisterOrLogin() {
         if (result?.error) {
           setError(result.error || "Невірний email або пароль"); // Show an error message
         } else {
-          window.location.href = "/user_profile"; // Redirect to a protected page
+          window.location.href = callbackUrl; // Redirect to a protected page
         }
         return;
       }

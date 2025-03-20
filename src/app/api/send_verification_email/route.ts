@@ -5,17 +5,19 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
     try {
-        const { email, token } = await request.json();
+        const { email, token, callbackUrl } = await request.json();
+
+        const callbackParam = callbackUrl ? `&callbackUrl=${encodeURIComponent(callbackUrl)}` : "";
 
         if (!email || !token) {
             return NextResponse.json({ error: 'Email and token are required' }, { status: 400 });
         }
 
-        const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify_email?token=${token}`;
+        const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify_email?token=${token}${callbackParam}`;
         await resend.emails.send({
             from: process.env.EMAIL_FROM,
             to: email,
-            subject: 'Verify Your Email for NMT Prep',
+            subject: 'Верифікуйте свій емейл для Kitacademy',
             html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>`,
         });
 

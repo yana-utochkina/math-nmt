@@ -106,22 +106,6 @@ export default function RegisterOrLogin() {
         setIsRegister(false);
         setFormData({ nickname: '', email: '', password: '', confirmPassword: '' });
       } else {
-        // Тут буде логіка входу (потрібно реалізувати окремий API)
-        // CHANGE: Check email verification before login sth is wrong here:
-        // moved logic to api/auth/route.ts to check verification
-        // const response = await fetch('/api/users/check', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ email: formData.email }),
-        // });
-        //
-        // const userData = await response.json();
-        //
-        // if (!response.ok || !userData.emailVerified) {
-        //   setError("Будь ласка, підтвердіть вашу електронну пошту перед входом.");
-        //   return;
-        // }
-
         const result = await signIn("credentials", {
           redirect: false, // Prevent NextAuth from redirecting automatically
           email: formData.email,

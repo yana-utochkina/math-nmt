@@ -14,6 +14,18 @@
   }
 }
 
+@media (max-width: 992px) {
+  .img-fluid {
+    width: 85% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .img-fluid {
+    width: 100% !important;
+  }
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

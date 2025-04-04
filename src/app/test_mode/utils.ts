@@ -77,19 +77,3 @@ export const handleTestCompletion = ({
     `/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}${timeParam}`
   );
 };
-
-type QuickTestCompletionParams = {
-  results: { correct: number; total: number };
-  router: any;
-};
-
-export const handleQuickTestCompletion = ({
-  results,
-  router
-}: QuickTestCompletionParams): void => {
-  const timeParam = '';
-  const topicId = '716cb5d6-a58b-4b29-b219-ac7e18118cda';
-  router.push(
-    `/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}${timeParam}`
-  );
-};

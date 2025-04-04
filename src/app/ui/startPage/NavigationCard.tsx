@@ -43,7 +43,7 @@ const NavigationSection: React.FC = () => {
       icon: Timer,
       title: "Швидкий тест у форматі НМТ",
       description: "Пройдіть тест для оцінки вашого поточного рівня знань з математики",
-      href: "/test_mode",
+      href: "/test_mode?fromPage=/",
     },
     {
       icon: BookOpen,

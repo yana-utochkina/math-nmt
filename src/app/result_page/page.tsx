@@ -16,7 +16,6 @@ export default function ResultsPage() {
   const total = parseInt(searchParams.get('total') || '0');
   const timeParam = searchParams.get('time');
   const completionTime = timeParam ? parseInt(timeParam) : null;  // Час проходження тесту
-  
   // number of correct answers
   const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
   
@@ -70,7 +69,7 @@ export default function ResultsPage() {
     
     fetchTopicTitle();
   }, [topicId]);
-  
+
   // color
   const getPercentageClass = () => {
     if (percentage >= 90) return "text-success";

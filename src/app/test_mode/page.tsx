@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import useUnsavedChangesWarning from "./routerWarning";
 import { Topic, SampledTask, Task, MultipleLettersAnswer } from "./types";
-import { checkSingleLetterAnswer, handleQuickTestCompletion } from "./utils";
+import { checkSingleLetterAnswer } from "./utils";
 import { TaskImage } from "../ui/test_mode/taskImage";
 import { AnswerButtons } from "../ui/test_mode/answerButtons";
 import { ControlButtons } from "../ui/test_mode/controlButtons";
@@ -27,7 +27,7 @@ export default function TestModePage() {
   const [showImages, setShowImages] = useState(false);
   const searchParams = useSearchParams();
   const fromPage = searchParams.get('fromPage');
-  const [, setResults] = useState<{correct: number, total: number}>({correct: 0, total: 0});
+  const [results, setResults] = useState<{correct: number, total: number}>({correct: 0, total: 0});
 
   const options = ["А", "Б", "В", "Г", "Д"];
 
@@ -165,7 +165,9 @@ export default function TestModePage() {
       // Перевіряємо, з якої сторінки прийшов користувач
       if (fromPage === '/') {
         // Перехід1 - якщо прийшли зі сторінки 1
-        router.push('/');
+        const timeParam = '';
+        const topicId = '716cb5d6-a58b-4b29-b219-ac7e18118cda';
+        router.push(`/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}${timeParam}`);
         //handleQuickTestCompletion({results, router});
       } else {
         // Перехід2 - для всіх інших випадків

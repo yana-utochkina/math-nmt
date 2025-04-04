@@ -12,3 +12,18 @@ export interface Task {
   }
   
   export type AnswerType = 'singleLetter' | 'multipleLetters' | 'number';
+
+  // Інтерфейс для теми
+export interface Topic {
+  id: string;
+  title: string;
+  Task?: Task[];
+}
+
+// Інтерфейс для вибраного завдання з його темою
+export interface SampledTask {
+  task: Task;
+  topic: string;
+  topicId: string;
+  result: number | null;
+}

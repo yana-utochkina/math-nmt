@@ -2,11 +2,11 @@
 
 import Confetti from "react-confetti";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import useUnsavedChangesWarning from "./routerWarning";
 import { Topic, SampledTask, Task, MultipleLettersAnswer } from "./types";
-import { checkSingleLetterAnswer } from "./utils";
+import { checkSingleLetterAnswer, handleQuickTestCompletion } from "./utils";
 import { TaskImage } from "../ui/test_mode/taskImage";
 import { AnswerButtons } from "../ui/test_mode/answerButtons";
 import { ControlButtons } from "../ui/test_mode/controlButtons";
@@ -25,6 +25,9 @@ export default function TestModePage() {
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showImages, setShowImages] = useState(false);
+  const searchParams = useSearchParams();
+  const fromPage = searchParams.get('fromPage');
+  const [, setResults] = useState<{correct: number, total: number}>({correct: 0, total: 0});
 
   const options = ["А", "Б", "В", "Г", "Д"];
 
@@ -76,6 +79,7 @@ export default function TestModePage() {
               });
             }
           }
+          setResults(prev => ({...prev, total: tasksWithTopics.length}));
 
           } catch (e) {
             // Ігноруємо помилки окремих тем, продовжуємо цикл
@@ -158,8 +162,15 @@ export default function TestModePage() {
     
     const isLastTask = currentTaskIndex === sampledTasks.length - 1;
     if (isLastTask) {
-      // Просто переходимо на головну сторінку без передачі результатів
-      router.push('/');
+      // Перевіряємо, з якої сторінки прийшов користувач
+      if (fromPage === '/') {
+        // Перехід1 - якщо прийшли зі сторінки 1
+        router.push('/');
+        //handleQuickTestCompletion({results, router});
+      } else {
+        // Перехід2 - для всіх інших випадків
+        router.push('/personal_program');
+      }
     } else {
       setSubmitted(false);
       setShowSolution(false);
@@ -186,6 +197,7 @@ export default function TestModePage() {
         setSubmitted(true);
         if (calculatedIsCorrect) {
           setShowConfetti(true);
+          setResults(prev => ({...prev, correct: prev.correct + 1}));
         }
       } else {
         handleNextTask();

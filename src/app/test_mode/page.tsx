@@ -35,12 +35,12 @@ export default function TestModePage() {
   useEffect(() => {
     async function fetchTopicsAndSampleTasks() {
       try {
-        // Спочатку отримуємо всі теми
+        // отримуємо всі теми
         const topicsRes = await fetch(`http://localhost:3000/api/topics`, { cache: "no-store" });
         if (!topicsRes.ok) throw new Error(`Статус: ${topicsRes.status}`);
         const allTopics = await topicsRes.json();
         
-        // Фільтруємо теми - виключаємо ті, заголовки яких починаються з числа та //
+        // фільтруємо теми
         const filteredTopics = allTopics.filter(
             (topic: Topic) => !((/^(?:\d+|\/\/)/.test(topic.title)) || topic.title == "Швидкий тест")
           );          
@@ -58,7 +58,7 @@ export default function TestModePage() {
             const topicData = await taskRes.json();
             if (!topicData.Task || topicData.Task.length === 0) continue;
             
-            // Шукаємо всі завдання з типом ONE та відповіддю-літерою
+            // Шукаємо всі завдання тестового типу
             const eligibleTasks = topicData.Task.filter((task: Task) => 
               task.type === "ONE" && 
               typeof task.answer === "string" && 
@@ -82,7 +82,6 @@ export default function TestModePage() {
           setResults(prev => ({...prev, total: tasksWithTopics.length}));
 
           } catch (e) {
-            // Ігноруємо помилки окремих тем, продовжуємо цикл
             console.error(`Помилка завантаження теми ${topic.id}:`, e);
           }
         }
@@ -147,12 +146,6 @@ export default function TestModePage() {
   // Перехід до наступного завдання
   const handleNextTask = () => {
     // Зберігаємо результат для поточного завдання
-    // if (submitted && currentSampledTask) {
-    //   const updatedTasks = [...sampledTasks];
-    //   updatedTasks[currentTaskIndex].result = checkCorrectness() ? 1 : 0;
-    //   setSampledTasks(updatedTasks);
-    // }
-    // Зберігаємо результат для поточного завдання
     if (currentSampledTask) {
       const updatedTasks = [...sampledTasks];
       const result = submitted ? (checkCorrectness() ? 1 : 0) : 0;
@@ -162,15 +155,12 @@ export default function TestModePage() {
     
     const isLastTask = currentTaskIndex === sampledTasks.length - 1;
     if (isLastTask) {
-      // Перевіряємо, з якої сторінки прийшов користувач
       if (fromPage === '/') {
-        // Перехід1 - якщо прийшли зі сторінки 1
+        // Перехід з головної
         const timeParam = '';
-        const topicId = '716cb5d6-a58b-4b29-b219-ac7e18118cda';
-        router.push(`/result_page?topicId=${topicId}&correct=${results.correct}&total=${results.total}${timeParam}`);
-        //handleQuickTestCompletion({results, router});
+        router.push(`/result_page?correct=${results.correct}&total=${results.total}${timeParam}`);
       } else {
-        // Перехід2 - для всіх інших випадків
+        // Перехід з створення плану
         router.push('/personal_program');
       }
     } else {
@@ -180,7 +170,7 @@ export default function TestModePage() {
     }
   };
 
-  // // Перевіряємо чи відповідь правильна
+  // Перевіряємо чи відповідь правильна
   const checkCorrectness = () => {
     if (!currentTask) return false;
     
@@ -205,24 +195,6 @@ export default function TestModePage() {
         handleNextTask();
       }
     };
-  // // Надсилання відповіді
-  // const handleSubmit = () => {
-  //   if (!submitted && currentTask) {
-  //     const isCorrect = checkCorrectness();
-      
-  //     setSubmitted(true);
-  //     if (isCorrect) {
-  //       setShowConfetti(true);
-  //     }
-      
-  //     // Оновлюємо результат у списку завдань
-  //     const updatedTasks = [...sampledTasks];
-  //     updatedTasks[currentTaskIndex].result = isCorrect ? 1 : 0;
-  //     setSampledTasks(updatedTasks);
-  //   } else {
-  //     handleNextTask();
-  //   }
-  // };
 
   if (loading) return <p className="text-center fs-4 fw-bold mt-5">Завантаження різноманітних завдань. Будь ласка, зачекайте...</p>;
   if (error) return <p className="text-center fs-4 fw-bold text-danger mt-5">Помилка: {error}</p>;
@@ -288,8 +260,8 @@ export default function TestModePage() {
                 type={answerType}
                 options={options}
                 answer={answer}
-                correctAnswer={currentTask.answer} // Передаємо правильну відповідь
-                submitted={submitted} // Передаємо стан відправки
+                correctAnswer={currentTask.answer}
+                submitted={submitted}
                 onAnswerChange={handleAnswerChange}
               />
               )}

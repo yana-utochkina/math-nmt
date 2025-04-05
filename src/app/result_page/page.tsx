@@ -47,7 +47,7 @@ export default function ResultsPage() {
   
   useEffect(() => {
     if (!topicId) {
-      setError("ID теми не знайдено");
+      setTitle("Швидкий тест");
       setLoading(false);
       return;
     }
@@ -126,9 +126,15 @@ export default function ResultsPage() {
               
               {/* <div className="d-flex justify-content-center gap-3"> */}
               <div className="d-flex flex-column flex-md-row justify-content-center gap-3">
-                <Link href={`/test_mode/${topicId}`} className="btn btn-primary btn-lg">
-                  Спробувати ще раз
-                </Link>
+              {topicId ? (
+                  <Link href={`/test_mode/${topicId}`} className="btn btn-primary btn-lg">
+                    Спробувати ще раз
+                  </Link>
+                ) : (
+                  <Link href="/test_mode?fromPage=/" className="btn btn-primary btn-lg">
+                    Спробувати ще раз
+                  </Link>
+                )}
                 <Link href="/" className="btn btn-outline-primary btn-lg">
                   На головну
                 </Link>

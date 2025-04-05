@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-//import { notFound } from "next/navigation";
 
 interface Theory {
   id: string;
@@ -42,8 +41,6 @@ export default function TheoryPage({ params: paramsPromise }: { params: Promise<
     fetchTheory();
   }, [params]);
 
-  // if (loading) return <div>Завантаження...</div>;
-  // if (!theory) return notFound();
   if (loading) return <p className="text-center fs-4 fw-bold mt-5">Завантаження...</p>;
   if (!theory) return <p className="text-center fs-4 fw-bold mt-5">Теорія не знайдена</p>;
 
@@ -73,89 +70,4 @@ export default function TheoryPage({ params: paramsPromise }: { params: Promise<
     </div>
   );
 }
-
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { LoadingState, ErrorState, TheoryUI } from "../../ui/theory/components";
-
-// interface Theory {
-//   id: string;
-//   title: string;
-//   Theory: { content: string }[];
-// }
-
-// export default function TheoryPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
-//   const [theory, setTheory] = useState<Theory | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState<string | null>(null);
-//   const [params, setParams] = useState<{ id: string } | null>(null);
-
-//   useEffect(() => {
-//     async function unwrapParams() {
-//       try {
-//         const resolvedParams = await paramsPromise;
-//         setParams(resolvedParams);
-//       } catch (error) {
-//         console.error("Помилка отримання параметрів:", error);
-//         setError("Не вдалося отримати параметри URL");
-//         setLoading(false);
-//       }
-//     }
-//     unwrapParams();
-//   }, [paramsPromise]);
-
-//   useEffect(() => {
-//     if (!params) return;
-    
-//     async function fetchTheory() {
-//       try {
-//         setLoading(true);
-//         setError(null);
-        
-//         // Додаємо таймаут для запиту
-//         const fetchPromise = fetch(`http://localhost:3000/api/topics/${params.id}`, {
-//           cache: "no-store",
-//         });
-        
-//         // Встановлюємо таймаут 10 секунд
-//         const timeoutPromise = new Promise((_, reject) => 
-//           setTimeout(() => reject(new Error("Час очікування вичерпано")), 10000)
-//         );
-        
-//         // Використовуємо Promise.race для конкуренції між запитом і таймаутом
-//         const res = await Promise.race([fetchPromise, timeoutPromise]) as Response;
-        
-//         if (!res.ok) {
-//           const errorText = await res.text();
-//           throw new Error(`Помилка HTTP ${res.status}: ${errorText}`);
-//         }
-        
-//         const data = await res.json();
-        
-//         // Перевірка структури даних
-//         if (!data || !data.title || !Array.isArray(data.Theory)) {
-//           throw new Error("Отримано некоректні дані");
-//         }
-        
-//         setTheory(data);
-//       } catch (error) {
-//         console.error("Помилка завантаження теми:", error);
-//         setError(error instanceof Error ? error.message : "Не вдалося завантажити тему");
-//         setTheory(null);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-    
-//     fetchTheory();
-//   }, [params]);
-
-//   if (loading) return <LoadingState />;
-//   if (error) return <ErrorState message={error} />;
-//   if (!theory) return <ErrorState message="Теорія не знайдена" />;
-
-//   return <TheoryUI theory={theory} />;
-// }
-
   

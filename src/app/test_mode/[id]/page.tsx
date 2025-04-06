@@ -34,6 +34,7 @@ export default function TestModePage() {
   const [startTime, setStartTime] = useState<number | null>(null); // Час початку тесту
   const [shouldUseTimer, setShouldUseTimer] = useState(false); // Флаг для використання таймера
   const [results, setResults] = useState<{correct: number, total: number}>({correct: 0, total: 0});
+  const [showImages, setShowImages] = useState(false);
 
   const options = ["А", "Б", "В", "Г", "Д"];
 
@@ -298,6 +299,32 @@ export default function TestModePage() {
             isLastTask={isLastTask}
             nextButtonText={submitted && isLastTask ? "Завершити" : (submitted ? "Далі" : "Відповісти")}
           />
+          <div className="text-center">
+            <button
+              className="btn fw-bold d-flex align-items-center justify-content-center mx-auto border-0 text-dark"
+              onClick={() => setShowImages(!showImages)}
+              style={{ fontSize: "1.2rem" }}
+            >
+              <span className="me-2">{showImages ? "▾" : "▸"}</span> Додаткові матеріали
+            </button>
+            
+            {showImages && (
+              <div className="d-flex flex-column align-items-center mt-3">
+                <img 
+                  src="/images/additional_materials/1.jpg" className="mb-2 img-fluid" alt="Матеріал 1" 
+                  style={{ width: "70%", maxWidth: "100%", transition: "width 0.3s ease"}} 
+                />
+                <img 
+                  src="/images/additional_materials/2.jpg" className="mb-2 img-fluid" alt="Матеріал 2" 
+                  style={{ width: "70%", maxWidth: "100%", transition: "width 0.3s ease"}} 
+                />
+                <img 
+                  src="/images/additional_materials/3.jpg" className="mb-2 img-fluid" alt="Матеріал 3" 
+                  style={{ width: "70%", maxWidth: "100%", transition: "width 0.3s ease"}} 
+                />
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

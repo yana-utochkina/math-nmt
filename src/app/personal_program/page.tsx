@@ -75,7 +75,7 @@ export default function PersonalPlanPage() {
               </h2>
               <div className="d-flex justify-content-center mb-3">
               <Link
-                 href="/test_mode/716cb5d6-a58b-4b29-b219-ac7e18118cda"
+                 href="/test_mode"
                  className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center"
                  style={{
                    height: "100px",

@@ -2,28 +2,28 @@ import { Topic } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request, context: { params: { topicID: string } }) {
+export async function GET(
+    request: Request,
+    { params }: { params: { topicId: string } }
+  ) {
     try {
-        const { params } = await context;
-        const { topicID } = await params;
-        const topic = await prisma.topic.findUniqueOrThrow({
-            where: {
-                id: topicID,
-            },
-            select: {
-                id: true,
-                title: true,
-                Task: true,
-                Plan: true,
-                Theory: true,
-              },
-        });
-        return NextResponse.json(topic, { status: 200 });
+      const { topicId } = params;
+      // Знаходимо тему за ID та включаємо пов'язані завдання (Task)
+      const topic = await prisma.topic.findUnique({
+        where: { id: topicId },
+        include: { Task: true },
+      });
+  
+      if (!topic) {
+        return NextResponse.json({ error: "Тему не знайдено" }, { status: 404 });
+      }
+  
+      return NextResponse.json({ Task: topic.Task });
+    } catch (error: any) {
+      console.error("Error fetching tasks:", error);
+      return NextResponse.json({ error: "Сталася помилка" }, { status: 500 });
     }
-    catch (error) {
-        return NextResponse.json({ error: `Topic ID error: ${error.message}` }, { status: 404 });
-    }
-}
+  }
 
 export async function PUT(request: Request, context: { params: { topicID: string } }) {
     try {

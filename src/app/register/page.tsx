@@ -246,13 +246,11 @@ export default function RegisterOrLogin() {
         {/*  </button>*/}
         {/*</div>*/}
         <div className="mt-4 text-center">
-          <h1>Sign Out</h1>
           {/* Default NextAuth sign-Out button */}
           <button
               onClick={() => signOut()}
               className="btn btn-primary w-100"
-          >
-            Sign Out
+          > Вийти
           </button>
         </div>
       </div>

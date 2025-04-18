@@ -28,8 +28,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <header className="container d-flex justify-content-between align-items-center py-3 border-bottom">
             {/* Назва проекту */}
             <div>
-              <Link href="/" className="text-decoration-none text-primary fw-bold" style={{ fontSize: "1.5rem" }}>
-                <Image src="/kitacademy-logo-edited.png" alt="Kitacademy logo" width={200} height={50} />
+              <Link href="/" className="text-decoration-none text-primary fw-bold" style={{fontSize: "1.5rem"}}>
+                <Image src="/kitacademy-logo-edited.png" alt="Kitacademy logo" width={200} height={50}/>
               </Link>
             </div>
 
@@ -42,13 +42,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   </Link>
               ) : (
                   // If session exists (user logged in), show logout button and profile link
-                  <Link className="text-primary me-3" href="/user_profile">
-                    Профіль
-                  </Link>
+                  <div>
+                    <Link className="text-primary me-3" href="/user_profile">
+                      Профіль
+                    </Link>
+                    <Link className="text-primary me-3" href="/register">
+                      Вийти
+                    </Link>
+                  </div>
+
+
               )}
-              <Link className="text-primary" href="/profile">
-                <i className="bi bi-person"></i>
-              </Link>
             </div>
           </header>
 
@@ -60,11 +64,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <div className="container text-center">
               <p className="m-0 text-muted">
                 Контакти:
-                <br />
+                <br/>
                 Email: helloworld_maths_NMT@gmail.com
-                <br />
+                <br/>
                 Telegram: @helloworld_maths_NMT
-                <br />© 2025 «Maths.ua».
+                <br/>© 2025 «Maths.ua».
               </p>
             </div>
           </footer>

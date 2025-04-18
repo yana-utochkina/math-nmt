@@ -14,7 +14,8 @@ model User {
   nickname          String
   email             String     @unique
   password          String
-  emailVerified     Boolean    @default(false)
+  // поки що кожен емейл верифікований бо з верифікацією є ще приколи
+  emailVerified     Boolean    @default(true)
   verificationToken String?
   isAdmin           Boolean    @default(false)
   Plan              Plan[]

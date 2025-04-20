@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import {useSearchParams} from "next/navigation";
 import {useEffect} from "react";
 
@@ -232,25 +232,6 @@ export default function RegisterOrLogin() {
             {isRegister
                 ? 'Вже маєте акаунт? Увійти'
                 : 'Немає акаунту? Зареєструватись'}
-          </button>
-        </div>
-        {/*<div className="mt-4 text-center">*/}
-        {/*  <h1>Google Sign In</h1>*/}
-        {/*  /!* Default NextAuth sign-in button *!/*/}
-        {/*  <button*/}
-        {/*      onClick={() => signIn("google")}*/}
-        {/*      className="btn btn-primary w-100"*/}
-        {/*      // className="btn btn-google" // Optional: Add styling classes like bootstrap's 'btn-google' if you want*/}
-        {/*  >*/}
-        {/*    Sign in with Google*/}
-        {/*  </button>*/}
-        {/*</div>*/}
-        <div className="mt-4 text-center">
-          {/* Default NextAuth sign-Out button */}
-          <button
-              onClick={() => signOut()}
-              className="btn btn-primary w-100"
-          > Вийти
           </button>
         </div>
       </div>

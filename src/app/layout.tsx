@@ -8,6 +8,7 @@ import Link from "next/link";
 import Providers from "./providers"; // <--- Import the Providers
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import SignOutButton from "@/components/SignOutButton";
 
 export const metadata = {
   title: "Kitacademy",
@@ -41,14 +42,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     Реєстрація/Увійти
                   </Link>
               ) : (
-                  // If session exists (user logged in), show logout button and profile link
+                  // If session exists (user logged in), show profile link and SignOutButton
                   <div>
                     <Link className="text-primary me-3" href="/user_profile">
                       Профіль
                     </Link>
-                    <Link className="text-primary me-3" href="/register">
-                      Вийти
-                    </Link>
+                    <SignOutButton />
                   </div>
 
 

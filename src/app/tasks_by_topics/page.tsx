@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link"; // Використовуємо Link для маршрутизації у Next.js
-import useAuthRedirect from "@/lib/authRedirect/useAuthRedirect";
 
 
 const topics = [
@@ -80,7 +79,6 @@ const topics = [
 ];
 
 export default function TopicsPage() {
-  useAuthRedirect();
   const [expandedTopics, setExpandedTopics] = useState<Record<string, boolean>>({});
 
   const toggleTopic = (title: string) => {

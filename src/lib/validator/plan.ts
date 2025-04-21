@@ -6,9 +6,9 @@ export function isValidEndDate(date: Date): boolean {
     const newDate: Date = new Date(now);
     newDate.setDate(newDate.getDate() + MIN_DAYS);
     const date1: Date = new Date(date);
-    return date1 < newDate;
+    return date1 >= newDate;
 }
 
 export function isValidHours(hours: number): boolean {
-    return hours < MIN_HOURS;
+    return hours >= MIN_HOURS;
 }

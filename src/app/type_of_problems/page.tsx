@@ -1,10 +1,8 @@
 "use client";
 import NavigationSection from "../ui/type_of_problems/NavigationCard";
-import useAuthRedirect from "@/lib/authRedirect/useAuthRedirect";
 
 
 export default function ProblemsPage() {
-    useAuthRedirect();
   return (
       <div className="d-flex flex-column justify-content-between min-vh-100">
         {/* Хедер */}

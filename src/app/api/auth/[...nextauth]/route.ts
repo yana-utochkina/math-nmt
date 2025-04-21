@@ -40,7 +40,7 @@ export const authOptions = {
                     throw new Error('Підтвердьте свою електронну адресу перед входом');
                 }
 
-                const isValid = await bcrypt.compare(credentials.password, user.password);
+                const isValid = bcrypt.compare(credentials.password, user.password);
                 if (!isValid) {
                     throw new Error("Неправильний пароль");
                 }

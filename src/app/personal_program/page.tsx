@@ -61,7 +61,7 @@ export default function PersonalPlanPage() {
         throw new Error(data.error || "Помилка при створенні плану");
       }
 
-      router.push("/personal/dashboard");
+      router.push("/personal_program_registered");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Невідома помилка");
     } finally {

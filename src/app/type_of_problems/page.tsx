@@ -1,4 +1,6 @@
+"use client";
 import NavigationSection from "../ui/type_of_problems/NavigationCard";
+
 
 export default function ProblemsPage() {
   return (

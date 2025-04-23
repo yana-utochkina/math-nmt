@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import useAuthRedirect from "@/lib/authRedirect/useAuthRedirect";
 
 export default function EditProfile() {
+  useAuthRedirect();
   const [formData, setFormData] = useState({
     name: "",
     email: "",

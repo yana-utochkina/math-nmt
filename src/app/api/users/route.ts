@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { isValidNickname, isValidEmail, isValidPassword } from "@/lib/validator/user";
 import { prisma } from "@/lib/db";
-import { User } from "@prisma/client";
-//import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
+
 
 export async function GET() {
   try {
@@ -26,20 +26,32 @@ export async function POST(request: Request) {
     if (!isValidEmail(body.email)) throw new Error("Invalid email");
     if (!isValidPassword(body.password)) throw new Error("The password must include: A-Z,a-z,0-9 and must have a length 8-20 symbols");
 
-    //const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(body.password, 10);
 
-    const user: User = body;
+    // Generate verification token
+    const verificationToken = crypto.randomUUID();
 
-    const newUser = await prisma.user.create({ data: user });
+    // Create user in the database
+    await prisma.user.create({
+      data: {
+        nickname: body.nickname,
+        email: body.email,
+        password: hashedPassword,
+        verificationToken,
+      },
+    });
 
-
-    return NextResponse.json(newUser, { status: 200 });
+    // Return success response with token
+    return NextResponse.json(
+        { message: "Користувач зареєстрований. Перевірте свою електронну пошту для підтвердження.", token: verificationToken },
+        { status: 201 }
+    );
 
   }
   catch (error) {
 
     if (error.code === "P2002") {
-      return NextResponse.json({ error: "This email has already been registered" }, { status: 409 });
+      return NextResponse.json({ error: "Ця електронна пошта вже зареєстрована" }, { status: 409 });
     }
     return NextResponse.json({ error: "Failed to add user" }, { status: 500 });
   }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link"; // Використовуємо Link для маршрутизації у Next.js
 
+
 const topics = [
   {
     category: "Алгебра і початки аналізу",

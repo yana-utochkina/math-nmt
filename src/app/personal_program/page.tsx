@@ -4,8 +4,14 @@ import { useState } from "react";
 import "../styles/styles.css";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useAuthRedirect from "@/lib/authRedirect/useAuthRedirect";
+import {useSession} from "next-auth/react";
 
 export default function PersonalPlanPage() {
+  //auth
+  useAuthRedirect();
+  const { data: session, status } = useSession();
+
   const router = useRouter();
   const [hoursNumber, setHoursNumber] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -46,7 +52,7 @@ export default function PersonalPlanPage() {
         body: JSON.stringify({
           hours: Number(hoursNumber),
           endDate: new Date(endDate).toISOString(),
-          userID: "temp-user-id" // TODO: Замінити на реальний ID з авторизації
+          userID: session.user.id
         })
       });
 
